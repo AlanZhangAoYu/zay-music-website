@@ -13,42 +13,42 @@
 					<el-menu>
 						<el-menu-item index="1">
 							<template #title>
-								<router-link to="/SystemIndex">
+								<router-link to="/SystemIndex" class="a">
 									<el-icon><house /></el-icon>系统首页
 								</router-link>
 							</template>
 						</el-menu-item>
 						<el-menu-item index="2">
 							<template #title>
-								<router-link to="/UserManage">
+								<router-link to="/UserManage" class="a">
 									<el-icon><user /></el-icon>用户管理
 								</router-link>
 							</template>
 						</el-menu-item>
 						<el-menu-item index="3">
 							<template #title>
-								<router-link to="/SongManage">
+								<router-link to="/SongManage" class="a">
 									<el-icon><headset /></el-icon>歌曲管理
 								</router-link>
 							</template>
 						</el-menu-item>
 						<el-menu-item index="4">
 							<template #title>
-								<router-link to="/SingerManage">
+								<router-link to="/SingerManage" class="a">
 									<el-icon><mic /></el-icon>歌手管理
 								</router-link>
 							</template>
 						</el-menu-item>
 						<el-menu-item index="5">
 							<template #title>
-								<router-link to="/AlbumManage">
+								<router-link to="/AlbumManage" class="a">
 									<el-icon><wallet /></el-icon>专辑管理
 								</router-link>
 							</template>
 						</el-menu-item>
 						<el-menu-item index="6">
 							<template #title>
-								<router-link to="/CommentManage">
+								<router-link to="/CommentManage" class="a">
 									<el-icon><chat-line-square /></el-icon>评论管理
 								</router-link>
 							</template>
@@ -82,5 +82,8 @@
 		margin: 20px;
 		position: relative;
 		top: 15px;
+	}
+	.a{
+		text-decoration: none;
 	}
 </style>
