@@ -5,6 +5,7 @@
 			  <div id="header" style="background-color: black;height: 70px;">
 				  <el-icon color="#ffffff" size="35px" style="position: relative;top: 15px;left: 10px;"><Menu /></el-icon>
 				  <span id="head_title">Zay-music后台管理系统</span>
+				  <span id="admin_name">{{ adminName }}</span>
 			  </div>
 		  </el-header>
 	      <el-container style="margin-top: 10px;">
@@ -72,6 +73,10 @@
 	import { Mic } from '@element-plus/icons-vue';
 	import { Wallet } from '@element-plus/icons-vue';
 	import { ChatLineSquare } from '@element-plus/icons-vue';
+	import { useRoute } from 'vue-router'
+	
+	const route = useRoute();
+	const adminName = route.params.adminName;
 </script>
 
 <style>
@@ -82,6 +87,9 @@
 		margin: 20px;
 		position: relative;
 		top: 15px;
+	}
+	#admin_name{
+		color: #FFFFFF;
 	}
 	.a{
 		text-decoration: none;

@@ -6,12 +6,12 @@
 			    label-width="100px"
 			    style="max-width: 460px;margin: 20px;">
 			    <el-form-item label="管理员账号">
-			      <el-input v-model="formLabelAlign.admin_account" />
+			      <el-input v-model="formLabelAlign.adminAccount" placeholder="请输入管理员账号"/>
 			    </el-form-item>
 			    <el-form-item label="密码">
-			      <el-input v-model="formLabelAlign.admin_password" />
+			      <el-input v-model="formLabelAlign.adminPassword" placeholder="请输入密码" type="password" show-password/>
 			    </el-form-item>
-				<el-button type="primary" style="width: 150px;margin-left: 50px;">登录</el-button>
+				<el-button type="primary" style="width: 150px;margin-left: 50px;" @click="adminLogin">登录</el-button>
 				<el-button style="width: 150px;margin-left: 20px;">取消</el-button>
 			  </el-form>
 		</div>
@@ -19,14 +19,27 @@
 </template>
 
 <script setup>
-import { reactive, ref } from 'vue'
+	import { reactive, ref } from 'vue'
+	import axios from 'axios';
+	import { useRouter } from 'vue-router'
 
-const labelPosition = ref('right')
-
-const formLabelAlign = reactive({
-  admin_account: '',
-  admin_password: '',
-})
+	const formLabelAlign = reactive({
+		adminAccount: '',
+		adminPassword: '',
+	})
+	const adminLogin=(formLabelAlign) => {
+		const router = useRouter();
+		axios.post('http://127.0.0.2:8081/adminLogin', formLabelAlign)
+			.then(function(response) {
+				router.push({
+					name: '/AdminIndex',
+					params: response.data
+				});
+			})
+			.catch(function(error) {
+				console.log(error);
+			});
+	}
 </script>
 
 <style>
