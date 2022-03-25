@@ -16,6 +16,7 @@ public class AdminController {
     private AdminService adminService;
     @PostMapping(value = "/adminLogin")
     public String adminLoginController(@RequestBody HashMap<String,String> para){
+        System.out.println(para);
         HashMap<String,String> map=new HashMap<>();
         map.put("adminName",adminService.adminLoginService(para.get("adminAccount"), para.get("adminPassword")));
         return JSON.toJSONString(map);
