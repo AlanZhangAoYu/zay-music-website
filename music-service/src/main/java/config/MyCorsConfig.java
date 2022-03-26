@@ -7,9 +7,8 @@ import org.springframework.web.filter.CorsFilter;
 /**
  * @author ZAY
  */
-@Configuration
 public class MyCorsConfig {
-    @Bean
+    /*@Bean
     public CorsFilter corsFilter() {
         //新建跨域配置
         CorsConfiguration corsConfiguration = new CorsConfiguration();
@@ -26,5 +25,5 @@ public class MyCorsConfig {
         //将跨域规则注册进去(类似于List中的add方法)
         source.registerCorsConfiguration("/**", corsConfiguration);
         return new CorsFilter(source);
-    }
+    }*/
 }

@@ -10,7 +10,7 @@ import org.springframework.context.annotation.ComponentScan;
  */
 @SpringBootApplication
 @MapperScan("mapper")
-@ComponentScan(basePackages = {"controller","mapper","service"})
+@ComponentScan(basePackages = {"controller","mapper","service","config"})
 public class ZayMusicApplication {
     public static void main(String[] args) {
         SpringApplication.run(ZayMusicApplication.class, args);
