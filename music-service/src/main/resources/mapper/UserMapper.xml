@@ -1,13 +1,19 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="">
-    <select id="selectAllUser"></select>
-    <select id="selectUserByAccount" parameterType="String" resultType="pojo.User"></select>
-    <select id="selectUserCount" resultType="Integer"></select>
-    <insert id="insertUser" parameterType="">
-        insert into `user_tab`
-        <set>
-            <if test=""></if>
-        </set>
+<mapper namespace="mapper.UserMapper">
+    <select id="selectAllUser">
+        select * from `user_tab`
+    </select>
+    <select id="selectUserByAccount" parameterType="String" resultType="pojo.User">
+        select * from `user_tab` where `userAccount` like #{userAccount}
+    </select>
+    <select id="selectAllUserCount" resultType="Integer">
+        select count(*) from `user_tab`
+    </select>
+    <insert id="insertUser">
+        insert into `user_tab`(`userAccount`,`userPassword`,`userName`,`salt`,`userSex`,`userBirthday`,`phoneNumber`,
+        `email`,`userIntroduction`,`userLocation`,`userImgId`,`createTime`,`updateTime`)
+        values (#{userAccount},#{userPassword},#{userName},#{salt},#{userSex},#{userBirthday},#{phoneNumber},#{email},
+                #{userIntroduction},#{userLocation},#{userImgId},#{createTime},#{updateTime})
     </insert>
 </mapper>
