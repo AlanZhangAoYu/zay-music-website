@@ -7,7 +7,6 @@ import pojo.User;
 import util.Md5Util;
 import util.RandomSaltUtil;
 import util.TokenUtil;
-
 import javax.annotation.Resource;
 import java.sql.Timestamp;
 import java.util.ArrayList;
