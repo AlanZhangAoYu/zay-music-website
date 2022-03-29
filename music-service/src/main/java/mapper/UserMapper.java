@@ -1,5 +1,6 @@
 package mapper;
 
+import com.github.pagehelper.Page;
 import org.apache.ibatis.annotations.Mapper;
 import pojo.User;
 

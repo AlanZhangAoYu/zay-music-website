@@ -6,7 +6,6 @@ import org.springframework.web.servlet.config.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-
 import javax.annotation.Resource;
 
 /**
@@ -39,6 +38,8 @@ public class WebInterceptorConfig implements WebMvcConfigurer {
         List<String> excludePath = new ArrayList<>();
         //排除拦截，除了注册登录(此时还没token)，其他都拦截
         excludePath.add("/adminLogin");
+        excludePath.add("/userRegister");
+        excludePath.add("/userLogin");
         registry.addInterceptor(tokenInterceptor)
                 .addPathPatterns("/**")
                 .excludePathPatterns(excludePath);
