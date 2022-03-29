@@ -40,9 +40,7 @@ public class UserController {
     @PostMapping(value = "/userLogin",produces = "application/json; charset=utf-8")
     public String userLoginController(@RequestParam("userAccount") String userAccount,
                                       @RequestParam("userPassword") String userPassword){
-        HashMap<String,String> map=new HashMap<>(1);
-        String userName = userService.userLoginService(userAccount,userPassword);
-        map.put("userName",userName);
+        HashMap<String,String> map=userService.userLoginService(userAccount,userPassword);
         return JSON.toJSONString(map);
     }
 }

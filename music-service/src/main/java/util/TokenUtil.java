@@ -22,17 +22,19 @@ public class TokenUtil {
     private static final String TOKEN_SECRET="ZAY_IS_HANDSOME";
 
     /**
-     * 管理员登录token生成
-     * @param admin 输对了账号密码的管理员
+     * token生成
+     * @param account 输对了的账号
+     * @param password 输对了的密码
      * @return 生成的token
      */
-    public static String signAdmin(Admin admin){
+    public static String signToken(String account,String password){
         String token = null;
         try {
             Date date = new Date(System.currentTimeMillis() + EXPIRE_TIME);
             JWTCreator.Builder builder = JWT.create();
             builder.withIssuer("auth0");
-            builder.withClaim("adminName",admin.getAdminName());
+            builder.withClaim("Account",account);
+            builder.withClaim("Password",password);
             builder.withExpiresAt(date);
             token = builder.sign(Algorithm.HMAC256(TOKEN_SECRET));
             return token;

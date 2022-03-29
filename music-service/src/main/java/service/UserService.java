@@ -6,10 +6,13 @@ import org.springframework.stereotype.Service;
 import pojo.User;
 import util.Md5Util;
 import util.RandomSaltUtil;
+import util.TokenUtil;
+
 import javax.annotation.Resource;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 
 /**
  * @author ZAY
@@ -29,16 +32,23 @@ public class UserService {
         ArrayList<User> list=userMapper.selectAllUser();
         return list;
     }
-    public String userLoginService(String userAccount,String userPassword){
+    public HashMap<String,String> userLoginService(String userAccount, String userPassword){
         ArrayList<User> list=userMapper.selectUserByAccount(userAccount);
+        HashMap<String,String> map=new HashMap<>(2);
+        map.put("userName","");
+        map.put("token","");
         if(list.size() == 0){
-            return "";
+            return map;
         }
         userPassword = userPassword+list.get(0).getSalt();
         if(Md5Util.getMd5Str(userPassword).equals(list.get(0).getUserPassword())){
-            return list.get(0).getUserName();
+            String token = TokenUtil.signToken(userAccount,userPassword);
+            String userName = list.get(0).getUserName();
+            map.put("userName",userName);
+            map.put("token",token);
+            return map;
         }
-        return "";
+        return map;
     }
     public int selectAllUserCount(){
         return userMapper.selectAllUserCount();
