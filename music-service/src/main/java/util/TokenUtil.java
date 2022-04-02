@@ -5,7 +5,6 @@ import com.auth0.jwt.JWTCreator;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import pojo.Admin;
 import java.util.Date;
 
 /**
@@ -53,9 +52,9 @@ public class TokenUtil {
         try {
             JWTVerifier verifier = JWT.require(Algorithm.HMAC256(TOKEN_SECRET)).withIssuer("auth0").build();
             DecodedJWT jwt = verifier.verify(token);
-            System.out.println("认证通过:");
+            /*System.out.println("认证通过:");
             System.out.println("username:" + jwt.getClaim("username").asString());
-            System.out.println("过期时间:" + jwt.getExpiresAt());
+            System.out.println("过期时间:" + jwt.getExpiresAt());*/
             return true;
         } catch (Exception e){
             return false;
