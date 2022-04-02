@@ -65,15 +65,14 @@
   
 - 专辑表(album_tab)
   - album_id 专辑id
+  - album_name 专辑名称
   - singer_ids 歌手id列表
   - year 发布年份
   - album_img_url 专辑封面图片地址
   
 - 音乐收藏表(collect_tab)
   - user_account 用户id
-  
   - song_id 歌曲id
-  
   - create_time 创建时间
   
 - 歌曲评论表(song_comment_tab)
@@ -86,12 +85,9 @@
 
 - 播放记录表(playback_record_tab)(Redis)(若用户重复播放历史记录，就修改本次播放时间为最新，且重复播放次数+1)
   
-  - **Key**: user_account 用户id
-  
-  - song_id 歌曲id
-  - listen_time 本次播放时间
-  - full_play 本次是否完整播放
-  - play_times 重复播放次数
+  - **Key**: user_account:song_id:listen_time **Value** 本次播放时间
+  - **Key**: user_account:song_id:full_play **Value** 本次是否完整播放
+  - **Key**: user_account:song_id:play_times **Value** 重复播放次数
 
 ##### MongoDB
 
