@@ -18,6 +18,8 @@
 >
 > Mongodb
 >
+> Redis
+>
 > Nginx
 
 #### 数据库建模
