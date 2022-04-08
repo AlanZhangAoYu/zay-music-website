@@ -12,8 +12,8 @@ import java.util.HashMap;
  * @author ZAY
  */
 public class Mp3Util {
-    public static HashMap<String,String> getMp3Info(String path) throws Exception{
-        MP3File mp3File = (MP3File) AudioFileIO.read(new File(path));
+    public static HashMap<String,String> getMp3Info(File file) throws Exception{
+        MP3File mp3File = (MP3File) AudioFileIO.read(file);
         AbstractID3v2Tag abstractId3v2Tag = mp3File.getID3v2Tag();
         MP3AudioHeader mp3AudioHeader = mp3File.getMP3AudioHeader();
 

@@ -7,7 +7,7 @@ import java.util.Objects;
 /**
  * @author ZAY
  */
-public class MongoDbFile {
+public class MongoDbFile{
     private String id;
     private String name;
     private String contentType;
