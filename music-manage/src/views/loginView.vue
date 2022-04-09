@@ -17,39 +17,46 @@
 	</div>
 </template>
 
-<script>
-	import {
-		reactive,
-		ref
-	} from 'vue';
+<script setup>
 	import { useRouter } from 'vue-router';
 	import axios from 'axios';
+  import { reactive } from "vue";
+  import { ElMessage } from 'element-plus'
 
-	export default {
-		data: function() {
-			return {
-				formLabelAlign: {
-					adminAccount: '',
-					adminPassword: ''
-				}
-			}
-		},
-		methods: {
-			submitForm() {
-				const router = useRouter();
-				axios.post('http://127.0.0.2:8081/adminLogin', this.formLabelAlign)
-					.then(function(response) {
-						router.push({
-							name: '/AdminIndex',
-							params: response.data
-						});
-					})
-					.catch(function(error) {
-						console.log(error);
-					});
-			}
-		}
-	};
+  const router = useRouter();
+	const formLabelAlign = reactive({
+    adminAccount: '',
+    adminPassword: ''
+  });
+  function submitForm() {
+    axios.post('http://127.0.0.2:8081/adminLogin',formLabelAlign)
+        .then(function(response) {
+          if(response.data.code === '0'){
+            router.push({
+              path: '/AdminIndex',
+              query: {
+                adminName: response.data.adminName
+              }
+            });
+          }else if(response.data.code === '1'){
+            ElMessage({
+              showClose: true,
+              message: '没有该管理员!请重新输入!',
+              type: 'error',
+            })
+          }else if(response.data.code === '2'){
+            ElMessage({
+              showClose: true,
+              message: '密码错误，请重新输入',
+              type: 'error',
+            })
+          }
+
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
+  }
 </script>
 
 <style>

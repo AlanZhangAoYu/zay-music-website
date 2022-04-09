@@ -33,20 +33,23 @@ public class UserService {
     }
     public HashMap<String,String> userLoginService(String userAccount, String userPassword){
         ArrayList<User> list=userMapper.selectUserByAccount(userAccount);
-        HashMap<String,String> map=new HashMap<>(2);
-        map.put("userName","");
-        map.put("token","");
+        HashMap<String,String> map=new HashMap<>(3);
         if(list.size() == 0){
+            map.put("code","1");
+            map.put("msg","Not Found User");
             return map;
         }
         userPassword = userPassword+list.get(0).getSalt();
         if(Md5Util.getMd5Str(userPassword).equals(list.get(0).getUserPassword())){
             String token = TokenUtil.signToken(userAccount,userPassword);
             String userName = list.get(0).getUserName();
+            map.put("code","0");
             map.put("userName",userName);
             map.put("token",token);
             return map;
         }
+        map.put("code","2");
+        map.put("msg","Password Error");
         return map;
     }
     public int selectAllUserCount(){

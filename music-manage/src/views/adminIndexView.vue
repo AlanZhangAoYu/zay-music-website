@@ -2,10 +2,22 @@
 	<div class="common-layout">
 	    <el-container>
 	      <el-header style="padding: 0;">
-			  <div id="header" style="background-color: black;height: 70px;">
+			  <div id="header" style="background-color: black;height: 70px;position: absolute;width: 100%">
 				  <el-icon color="#ffffff" size="35px" style="position: relative;top: 15px;left: 10px;"><Menu /></el-icon>
 				  <span id="head_title">Zay-music后台管理系统</span>
-				  <span id="admin_name">{{ adminName }}</span>
+				  <span style="position: relative;left: 900px;top: 10px">
+            <el-dropdown>
+              <span class="el-dropdown-link" style="color: #FFFFFF;">
+                <span style="font-size: 20px">{{ adminName }}</span>
+                <el-avatar :size="40" :src="circleUrl" />
+              </span>
+              <template #dropdown>
+                <el-dropdown-menu>
+                  <el-dropdown-item>个人中心</el-dropdown-item>
+                </el-dropdown-menu>
+              </template>
+            </el-dropdown>
+          </span>
 			  </div>
 		  </el-header>
 	      <el-container style="margin-top: 10px;">
@@ -66,17 +78,18 @@
 </template>
 
 <script setup>
-	import { Menu } from '@element-plus/icons-vue';
-	import { House } from '@element-plus/icons-vue';
-	import { User } from '@element-plus/icons-vue';
-	import { Headset } from '@element-plus/icons-vue';
-	import { Mic } from '@element-plus/icons-vue';
-	import { Wallet } from '@element-plus/icons-vue';
-	import { ChatLineSquare } from '@element-plus/icons-vue';
-	import { useRoute } from 'vue-router'
-	
-	const route = useRoute();
-	const adminName = route.params.adminName;
+  import { Menu } from '@element-plus/icons-vue';
+  import { House } from '@element-plus/icons-vue';
+  import { User } from '@element-plus/icons-vue';
+  import { Headset } from '@element-plus/icons-vue';
+  import { Mic } from '@element-plus/icons-vue';
+  import { Wallet } from '@element-plus/icons-vue';
+  import { ChatLineSquare } from '@element-plus/icons-vue';
+  import {useRouter} from 'vue-router';
+
+	const router = useRouter();
+	const adminName = router.currentRoute.value.query.adminName;
+  const circleUrl = 'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png';
 </script>
 
 <style>
@@ -87,9 +100,6 @@
 		margin: 20px;
 		position: relative;
 		top: 15px;
-	}
-	#admin_name{
-		color: #FFFFFF;
 	}
 	.a{
 		text-decoration: none;
