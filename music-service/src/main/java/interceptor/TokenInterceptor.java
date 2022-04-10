@@ -15,6 +15,15 @@ import javax.servlet.http.HttpServletResponse;
 public class TokenInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        /*
+         这个if判断相当重要!!
+         解决了设置拦截器验证token时出现的跨域问题
+         参考文档: https://blog.csdn.net/MrKorbin/article/details/104066979
+        */
+        if("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+            System.out.println("Method:OPTIONS");
+            return true;
+        }
         response.setCharacterEncoding("utf-8");
         response.setContentType("application/json; charset=utf-8");
         String token = request.getHeader("token");

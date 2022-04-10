@@ -24,7 +24,7 @@
   </div>
 
 
-  <el-dialog v-model="searchSongVisible" title="请选择搜索条件">
+  <el-dialog v-model="searchSongVisible" title="请选择搜索条件" width="50%" style="text-align: center">
     <el-form :model="searchForm">
       <el-form-item label="歌曲ID">
         <el-input v-model="searchForm.songId" autocomplete="off" />
@@ -53,27 +53,30 @@
   </el-dialog>
 
 
-  <el-dialog v-model="addSongVisible" title="请上传文件">
+  <el-dialog v-model="addSongVisible" title="请上传文件" width="50%" style="text-align: center">
     <el-form>
       <el-form-item label="歌曲种类">
         <el-select v-model="addForm.songType" class="m-2" placeholder="请选择歌曲种类" size="large">
           <el-option v-for="item in songType" :key="item.songTypeId" :label="item.songTypeName" :value="item.songTypeId"/>
         </el-select>
       </el-form-item>
+      <el-form-item>
+        <el-upload class="upload-demo" drag multiple :limit="3" :auto-upload="false"
+        :http-request="addFileList" :file-list="addForm.fileList" :headers="{'Content-Type': 'multipart/form-data'}">
+          <el-icon class="el-icon--upload"><upload-filled /></el-icon>
+          <div class="el-upload__text">
+            拖拽文件到此区域或<em>点击上传</em>
+          </div>
+          <template #tip>
+            <div class="el-upload__tip">mp3文件大小应小于16MB</div>
+          </template>
+        </el-upload>
+      </el-form-item>
     </el-form>
-    <el-upload class="upload-demo" drag action="http://127.0.0.2:8081/uploadSongFile" multiple
-               :limit="3">
-      <el-icon class="el-icon--upload"><upload-filled /></el-icon>
-      <div class="el-upload__text">
-        拖拽文件到此区域或<em>点击上传</em>
-      </div>
-      <template #tip>
-        <div class="el-upload__tip">mp3文件大小应小于16MB</div>
-      </template>
-    </el-upload>
     <template #footer>
       <span class="dialog-footer">
-        <el-button type="primary" @click="addSongVisible = false">取消</el-button>
+        <el-button @click="addSongVisible = false">取消</el-button>
+        <el-button type="primary" @click="uploadMp3File">上传</el-button>
       </span>
     </template>
   </el-dialog>
@@ -82,6 +85,8 @@
 <script setup>
   import {reactive, ref} from "vue";
   import { UploadFilled } from '@element-plus/icons-vue'
+  import axios from 'axios'
+  import {ElMessage} from "element-plus";
 
   const searchSongVisible = ref(false);
   const addSongVisible = ref(false);
@@ -93,8 +98,31 @@
     songType: ''
   });
   const addForm = reactive({
-    songType: ''
+    songType: '',
+    fileList: []
   });
+  function addFileList(option){
+    //将要上传的文件暂时放在addForm.fileList中
+    //此函数替代默认的<el-upload>上传行为
+    addForm.fileList.push(option);
+  }
+  function uploadMp3File(){
+    let parma = new FormData();
+    parma.append('songType',addForm.songType);
+    addForm.fileList.forEach((value,index) => {
+      parma.append('file',value.raw);
+    });
+    axios.post('http://127.0.0.2:8081/uploadSongFile',parma).then(function (response){
+      ElMessage({
+        showClose: true,
+        message: '上传成功',
+        type: 'success',
+      })
+    }).catch(function (error){
+      ElMessage.error('上传失败');
+      console.log(error);
+    });
+  }
   const songType = [
     {
       songTypeId: 0,

@@ -32,11 +32,10 @@
     axios.post('http://127.0.0.2:8081/adminLogin',formLabelAlign)
         .then(function(response) {
           if(response.data.code === '0'){
+            localStorage.setItem('token',response.data.token);
+            localStorage.setItem('adminName',response.data.adminName);
             router.push({
-              path: '/AdminIndex',
-              query: {
-                adminName: response.data.adminName
-              }
+              path: '/AdminIndex'
             });
           }else if(response.data.code === '1'){
             ElMessage({
