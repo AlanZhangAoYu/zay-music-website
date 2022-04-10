@@ -39,20 +39,29 @@
         <el-input v-model="searchForm.albumName" autocomplete="off" />
       </el-form-item>
       <el-form-item label="歌曲种类">
-        <el-input v-model="searchForm.songType" autocomplete="off" />
+        <el-select v-model="searchForm.songType" class="m-2" placeholder="请选择歌曲种类" size="large">
+          <el-option v-for="item in songType" :key="item.songTypeId" :label="item.songTypeName" :value="item.songTypeId"/>
+        </el-select>
       </el-form-item>
     </el-form>
     <template #footer>
       <span class="dialog-footer">
-        <el-button @click="addUserVisible = false">取消</el-button>
-        <el-button type="primary" @click="addUserVisible = false">查询</el-button>
+        <el-button @click="searchSongVisible = false">取消</el-button>
+        <el-button type="primary" @click="searchSongVisible = false">查询</el-button>
       </span>
     </template>
   </el-dialog>
 
 
   <el-dialog v-model="addSongVisible" title="请上传文件">
-    <el-upload class="upload-demo" drag action="https://jsonplaceholder.typicode.com/posts/" multiple
+    <el-form>
+      <el-form-item label="歌曲种类">
+        <el-select v-model="addForm.songType" class="m-2" placeholder="请选择歌曲种类" size="large">
+          <el-option v-for="item in songType" :key="item.songTypeId" :label="item.songTypeName" :value="item.songTypeId"/>
+        </el-select>
+      </el-form-item>
+    </el-form>
+    <el-upload class="upload-demo" drag action="http://127.0.0.2:8081/uploadSongFile" multiple
                :limit="3">
       <el-icon class="el-icon--upload"><upload-filled /></el-icon>
       <div class="el-upload__text">
@@ -84,8 +93,35 @@
     songType: ''
   });
   const addForm = reactive({
-
+    songType: ''
   });
+  const songType = [
+    {
+      songTypeId: 0,
+      songTypeName: '未知分类'
+    },{
+      songTypeId: 1,
+      songTypeName: '华语'
+    },{
+      songTypeId: 2,
+      songTypeName: '粤语'
+    },{
+      songTypeId: 3,
+      songTypeName: '欧美'
+    },{
+      songTypeId: 4,
+      songTypeName: '日韩'
+    },{
+      songTypeId: 5,
+      songTypeName: '轻音乐'
+    },{
+      songTypeId: 6,
+      songTypeName: '古典'
+    },{
+      songTypeId: 7,
+      songTypeName: '其他'
+    }
+  ];
 </script>
 
 <style>

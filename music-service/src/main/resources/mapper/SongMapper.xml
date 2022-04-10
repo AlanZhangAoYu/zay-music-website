@@ -1,0 +1,7 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mapper.SongMapper">
+    <select id="selectAllSong" resultMap="selectSongResultMap"></select>
+    <resultMap id="selectSongResultMap" type="pojo.Song">
+    </resultMap>
+</mapper>

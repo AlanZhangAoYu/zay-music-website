@@ -20,7 +20,7 @@ public class MyTest {
     @Test
     public void Mp3Test(){
         try {
-            File file=new File("F:\\音乐\\G.E.M.邓紫棋 - 龙卷风.mp3");
+            File file=new File("F:\\音乐\\Sheep-张艺兴&Alan Walker.mp3");
             HashMap<String,String> map= Mp3Util.getMp3Info(file);
             System.out.println(map);
         } catch (Exception e) {

@@ -27,7 +27,11 @@ public class UserController {
     public String userRegisterController(User user){
         HashMap<String,Integer> map=new HashMap<>(1);
         int result = userService.userRegisterService(user);
-        map.put("result",result);
+        if(result == 1){
+            map.put("code",0);
+            return JSON.toJSONString(map);
+        }
+        map.put("code",-1);
         return JSON.toJSONString(map);
     }
     @GetMapping(value = "/selectAllUserCount",produces = "application/json; charset=utf-8")
