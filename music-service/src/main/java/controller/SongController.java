@@ -25,11 +25,16 @@ public class SongController {
     @PostMapping("/uploadSongFile")
     public String uploadSongFileController(@RequestParam("file") MultipartFile file){
         HashMap<String,String> map=new HashMap<>(2);
-        System.out.println(file);
-        return JSON.toJSONString(map);
-        /*try{
-            File newFile= MultipartFileToFileUtil.multipartFileToFile(file);
+        try {
+            File newFile = MultipartFileToFileUtil.multipartFileToFile(file);
             HashMap<String,String> songMap= Mp3Util.getMp3Info(newFile);
+            return JSON.toJSONString(songMap);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return JSON.toJSONString(map);
+        }
+        /*try{
+
             MongoDbFile mongoDbFile=new MongoDbFile(file.getOriginalFilename(), file.getContentType(), file.getSize(),
                     new Binary(file.getBytes()));
             mongoDbFile.setMd5(Md5Util.getMd5InputStream(file.getInputStream()));

@@ -1,4 +1,33 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="mapper.SingerMapper">
+    <select id="selectAllSinger" resultType="pojo.Singer">
+        select `singerId`,`singerName`,`singerBirth`,`singerIntroduction`,`singerLocation`,`singerImgId`
+        from `singer_tab`
+    </select>
+    <insert id="insertSinger" parameterType="pojo.Singer">
+        insert into `singer_tab`(`singerName`,`singerBirth`,`singerImgId`)
+        values (#{singerName},#{singerBirth},#{singerImgId})
+    </insert>
+    <update id="updateSingerInfo" parameterType="Integer">
+        update `singer_tab`
+        <set>
+            <if test="singerName != null and singerName != ''">
+                `singerName` = #{singerName}
+            </if>
+            <if test="singerBirth != null and singerBirth != ''">
+                `singerBirth` = #{singerBirth}
+            </if>
+            <if test="singerIntroduction != null and singerIntroduction != ''">
+                `singerIntroduction` = #{singerIntroduction}
+            </if>
+            <if test="singerLocation != null and singerLocation != ''">
+                `singerLocation` = #{singerLocation}
+            </if>
+            <if test="singerImgId != null and singerImgId != ''">
+                `singerImgId` = #{singerImgId}
+            </if>
+        </set>
+        where `singerId` = #{singerId}
+    </update>
 </mapper>

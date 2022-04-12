@@ -1,4 +1,24 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="mapper.AlbumMapper">
+    <select id="selectAllAlbum" resultMap="selectAlbumMap">
+        select `album_tab`.`albumId`,`album_tab`.`albumName`,`singer_tab`.`singerName`,`album_tab`.`year`,
+               `album_tab`.`albumImgId`
+        from `album_tab` inner join `singer_tab`
+        on `album_tab`.`singerId` = `singer_tab`.`singerId`
+    </select>
+    <insert id="insertAlbum" parameterType="pojo.Album">
+        insert into `album_tab`(`albumName`,`singerId`,`year`,`albumImgId`)
+        values (#{albumName},#{singerId},#{year},#{albumImgId})
+    </insert>
+    <resultMap id="selectAlbumMap" type="pojo.Album">
+        <id property="albumId" column="albumId"/>
+        <result property="albumName" column="albumName"/>
+        <result property="year" column="year"/>
+        <result property="albumImgId" column="albumImgId"/>
+        <association property="singer" javaType="pojo.Singer">
+            <id property="singerId" column="singerId"/>
+            <result property="singerName" column="singerName"/>
+        </association>
+    </resultMap>
 </mapper>

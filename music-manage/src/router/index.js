@@ -42,11 +42,15 @@ const router = createRouter({
     history: createWebHashHistory(),
     routes,
 });
-router.beforeEach(({name},from,next) =>{
-    if(localStorage.getItem('token')){
+router.beforeEach((name,from,next) =>{
+    if(name.path === '/login'){
         next();
     }else {
-        next({name: 'login'});
+        if(localStorage.getItem('token')){
+            next();
+        }else {
+            next({name: 'login'});
+        }
     }
 });
 

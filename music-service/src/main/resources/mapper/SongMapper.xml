@@ -1,7 +1,35 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="mapper.SongMapper">
-    <select id="selectAllSong" resultMap="selectSongResultMap"></select>
+    <select id="selectAllSong" resultMap="selectSongResultMap">
+        select song_tab.songId,song_tab.songName,song_tab.songLength,song_tab.fileId,
+            singer_tab.singerName,album_tab.albumName,song_type_tab.songTypeName
+        from song_tab inner join album_tab on song_tab.albumId = album_tab.albumId
+            inner join singer_tab on album_tab.singerId = singer_tab.singerId
+            inner join song_type_tab on song_tab.songTypeId = song_type_tab.songTypeId
+    </select>
+    <!--这里遇到问题, 参考文章: https://blog.csdn.net/m0_38138387/article/details/79314297-->
+    <insert id="insertSong" parameterType="pojo.Song">
+        insert into `song_tab`(`songName`,`singerId`,`albumId`,`songLength`,songTypeId,`createTime`,`fileId`)
+        values (#{songName},#{singerId},#{albumId},#{songLength},#{songType.songTypeId},#{createTime},#{fileId})
+    </insert>
     <resultMap id="selectSongResultMap" type="pojo.Song">
+        <id property="songId" column="songId"/>
+        <result property="songName" column="songName"/>
+        <result property="songLength" column="songLength"/>
+        <result property="createTime" column="createTime"/>
+        <result property="fileId" column="fileId"/>
+        <association property="singer" javaType="pojo.Singer">
+            <id property="singerId" column="singerId"/>
+            <result property="singerName" column="singerName"/>
+        </association>
+        <association property="album" javaType="pojo.Album">
+            <id property="albumId" column="albumId"/>
+            <result property="albumName" column="albumName"/>
+        </association>
+        <association property="songType" javaType="pojo.SongType">
+            <id property="songTypeId" column="songTypeId"/>
+            <result property="songTypeName" column="songTypeName"/>
+        </association>
     </resultMap>
 </mapper>

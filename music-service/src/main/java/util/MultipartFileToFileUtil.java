@@ -17,7 +17,7 @@ public class MultipartFileToFileUtil {
         if(file.getSize()<=0){
             toFile = null;
         }else {
-            InputStream ins= file.getInputStream();;
+            InputStream ins= file.getInputStream();
             toFile = new File(file.getOriginalFilename());
             toFile = inputStreamToFile(ins, toFile);
             ins.close();
@@ -28,8 +28,8 @@ public class MultipartFileToFileUtil {
         try {
             OutputStream os = new FileOutputStream(file);
             int bytesRead = 0;
-            byte[] buffer = new byte[8192];
-            while ((bytesRead = ins.read(buffer, 0, 8192)) != -1) {
+            byte[] buffer = new byte[16384];
+            while ((bytesRead = ins.read(buffer, 0, 16384)) != -1) {
                 os.write(buffer, 0, bytesRead);
             }
             os.close();

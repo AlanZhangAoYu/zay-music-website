@@ -3,7 +3,8 @@ package mapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import pojo.MongoDbFile;
-
+import pojo.Song;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -36,4 +37,9 @@ public interface SongMapper extends MongoRepository<MongoDbFile,String> {
      * @return 文件对象结果列表
      */
     List<MongoDbFile> listFilesByPage(int pageIndex, int pageSize);
+    /**
+     * 查询所有歌曲
+     * @return 返回查询到的所有歌曲
+     */
+    ArrayList<Song> selectAllSong();
 }

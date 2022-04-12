@@ -40,7 +40,7 @@
       </el-form-item>
       <el-form-item label="歌曲种类">
         <el-select v-model="searchForm.songType" class="m-2" placeholder="请选择歌曲种类" size="large">
-          <el-option v-for="item in songType" :key="item.songTypeId" :label="item.songTypeName" :value="item.songTypeId"/>
+          <el-option v-for="item in songTypeList" :key="item.songTypeId" :label="item.songTypeName" :value="item.songTypeId"/>
         </el-select>
       </el-form-item>
     </el-form>
@@ -57,7 +57,7 @@
     <el-form>
       <el-form-item label="歌曲种类">
         <el-select v-model="addForm.songType" class="m-2" placeholder="请选择歌曲种类" size="large">
-          <el-option v-for="item in songType" :key="item.songTypeId" :label="item.songTypeName" :value="item.songTypeId"/>
+          <el-option v-for="item in songTypeList" :key="item.songTypeId" :label="item.songTypeName" :value="item.songTypeId"/>
         </el-select>
       </el-form-item>
       <el-form-item>
@@ -90,6 +90,8 @@
 
   const searchSongVisible = ref(false);
   const addSongVisible = ref(false);
+  let songTypeList = [];
+  selectSongType();
   const searchForm = reactive({
     songId: '',
     songName: '',
@@ -123,33 +125,20 @@
       console.log(error);
     });
   }
-  const songType = [
-    {
-      songTypeId: 0,
-      songTypeName: '未知分类'
-    },{
-      songTypeId: 1,
-      songTypeName: '华语'
-    },{
-      songTypeId: 2,
-      songTypeName: '粤语'
-    },{
-      songTypeId: 3,
-      songTypeName: '欧美'
-    },{
-      songTypeId: 4,
-      songTypeName: '日韩'
-    },{
-      songTypeId: 5,
-      songTypeName: '轻音乐'
-    },{
-      songTypeId: 6,
-      songTypeName: '古典'
-    },{
-      songTypeId: 7,
-      songTypeName: '其他'
-    }
-  ];
+  function selectSongType(){
+    axios.get('http://127.0.0.2:8081/selectAllSongType').then(function (response){
+      for (let it in response.data) {
+        //JavaScript是什么够吧东西，这个it到底是什么东西?一个循环遍历卡了半天，靠!!!
+        let item={};
+        item.songTypeId = response.data[it].songTypeId;
+        item.songTypeName = response.data[it].songTypeName;
+        console.log(item);
+        songTypeList.push(item);
+      }
+    }).catch(function (error){
+      return [];
+    });
+  }
 </script>
 
 <style>
