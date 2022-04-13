@@ -2,8 +2,8 @@ package mapper;
 
 import org.apache.ibatis.annotations.Mapper;
 import pojo.Singer;
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * @author ZAY
@@ -14,7 +14,7 @@ public interface SingerMapper {
      * 查询所有的歌手
      * @return 返回所有歌手
      */
-    ArrayList<Singer> selectAllSinger();
+    List<Singer> selectAllSinger();
 
     /**
      * 插入歌手

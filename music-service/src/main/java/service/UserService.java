@@ -1,6 +1,7 @@
 package service;
 
 import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import mapper.UserMapper;
 import org.springframework.stereotype.Service;
 import pojo.User;
@@ -12,6 +13,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * @author ZAY
@@ -23,13 +25,15 @@ public class UserService {
 
     /**
      * 分页查询所有用户信息
-     * @param page 当前页码
+     * @param pageNum 当前页码
+     * @param pageSize 每页有几行
      * @return 根据当前页码返回的分页结果
      */
-    public ArrayList<User> selectAllUser(int page){
-        PageHelper.startPage(page,10);
-        ArrayList<User> list=userMapper.selectAllUser();
-        return list;
+    public List<User> selectAllUser(int pageNum, int pageSize){
+        PageHelper.startPage(pageNum,pageSize);
+        List<User> list=userMapper.selectAllUser();
+        PageInfo<User> pageInfo = new PageInfo<>(list);
+        return pageInfo.getList();
     }
     public HashMap<String,String> userLoginService(String userAccount, String userPassword){
         ArrayList<User> list=userMapper.selectUserByAccount(userAccount);

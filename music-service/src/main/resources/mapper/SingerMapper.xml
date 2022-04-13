@@ -9,7 +9,7 @@
         insert into `singer_tab`(`singerName`,`singerBirth`,`singerImgId`)
         values (#{singerName},#{singerBirth},#{singerImgId})
     </insert>
-    <update id="updateSingerInfo" parameterType="Integer">
+    <update id="updateSingerInfo" parameterType="pojo.Singer">
         update `singer_tab`
         <set>
             <if test="singerName != null and singerName != ''">

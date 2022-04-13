@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.RestController;
 import pojo.User;
 import service.UserService;
 import javax.annotation.Resource;
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * @author ZAY
@@ -19,8 +19,8 @@ public class UserController {
     @Resource
     private UserService userService;
     @GetMapping(value = "/selectAllUser",produces = "application/json; charset=utf-8")
-    public String selectAllUserController(@RequestParam("page") int page){
-        ArrayList<User> users = userService.selectAllUser(page);
+    public String selectAllUserController(@RequestParam("pageNum") int pageNum,@RequestParam("pageSize") int pageSize){
+        List<User> users = userService.selectAllUser(pageNum,pageSize);
         return JSON.toJSONString(users);
     }
     @PostMapping(value = "/userRegister",produces = "application/json; charset=utf-8")
