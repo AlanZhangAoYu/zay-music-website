@@ -4,6 +4,7 @@ import org.apache.ibatis.annotations.Mapper;
 import pojo.Singer;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author ZAY
@@ -18,15 +19,15 @@ public interface SingerMapper {
 
     /**
      * 插入歌手
-     * @param singer 要插入的歌手
+     * @param map 要插入的歌手信息
      * @return 返回数据库中受影响的行数
      */
-    int insertSinger(Singer singer);
+    int insertSinger(Map<Object,Object> map);
 
     /**
      * 更新一个歌手的信息
-     * @param map 传入的更新信息map
+     * @param singer 传入的更新信息map
      * @return 返回数据库中受影响的行数
      */
-    int updateSingerInfo(HashMap map);
+    int updateSingerInfo(Singer singer);
 }

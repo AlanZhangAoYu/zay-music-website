@@ -5,7 +5,7 @@
         select `singerId`,`singerName`,`singerBirth`,`singerIntroduction`,`singerLocation`,`singerImgId`
         from `singer_tab`
     </select>
-    <insert id="insertSinger" parameterType="pojo.Singer">
+    <insert id="insertSinger">
         insert into `singer_tab`(`singerName`,`singerBirth`,`singerImgId`)
         values (#{singerName},#{singerBirth},#{singerImgId})
     </insert>

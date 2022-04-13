@@ -3,6 +3,7 @@ package mapper;
 import org.apache.ibatis.annotations.Mapper;
 import pojo.Album;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author ZAY
@@ -17,9 +18,16 @@ public interface AlbumMapper {
 
     /**
      * 插入一个专辑信息
-     * @param album 要插入的专辑信息
+     * @param map 要插入的专辑信息
      * @return 返回数据库受影响的行数
      */
-    int insertAlbum(Album album);
+    int insertAlbum(Map<Object,Object> map);
+
+    /**
+     * 根据名称查询数据库中是否有该专辑
+     * @param albumName 传入的待查询的专辑名
+     * @return 返回数据库中是否有该专辑
+     */
+    List<Album> selectAlbumByName(String albumName);
 
 }
