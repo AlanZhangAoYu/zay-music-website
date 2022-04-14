@@ -31,6 +31,16 @@ public class SingerService {
         map.put("singerName",singerName);
         map.put("singerBirth",new Date(GlobalConstant.DEFAULT_DATE));
         map.put("singerImgId",GlobalConstant.DEFAULT_IMAGE_ID);
-        return singerMapper.insertSinger(map);
+        singerMapper.insertSinger(map);
+        List<Singer> list= singerMapper.selectSingerByName(singerName);
+        int singerId=0;
+        for (Singer singer : list) {
+            singerId=singer.getSingerId();
+        }
+        return singerId;
+    }
+    public boolean selectSingerByName(String singerName){
+        List<Singer> list=singerMapper.selectSingerByName(singerName);
+        return list.size() != 0;
     }
 }

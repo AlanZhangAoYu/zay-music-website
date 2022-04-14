@@ -26,4 +26,6 @@ public class GlobalConstant {
      * 默认日期和时间: 1970-01-01 08:00:00
      */
     public static final long DEFAULT_DATE = 0L;
+    public static final String SUCCESS = "success";
+    public static final String FAIL = "fail";
 }

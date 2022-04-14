@@ -34,6 +34,12 @@ public class AlbumService {
         map.put("singerId",singerId);
         map.put("year",GlobalConstant.DEFAULT_ALBUM_YEAR);
         map.put("albumImgId", GlobalConstant.DEFAULT_IMAGE_ID);
-        return albumMapper.insertAlbum(map);
+        albumMapper.insertAlbum(map);
+        List<Album> list = albumMapper.selectAlbumByName(albumName);
+        int albumId=0;
+        for (Album album : list) {
+            albumId=album.getAlbumId();
+        }
+        return albumId;
     }
 }

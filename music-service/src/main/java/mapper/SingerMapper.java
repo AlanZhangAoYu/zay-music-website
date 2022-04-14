@@ -30,4 +30,11 @@ public interface SingerMapper {
      * @return 返回数据库中受影响的行数
      */
     int updateSingerInfo(Singer singer);
+
+    /**
+     * 根据歌手名查询歌手信息
+     * @param singerName 传入的歌手名
+     * @return 返回的歌手信息
+     */
+    List<Singer> selectSingerByName(String singerName);
 }
