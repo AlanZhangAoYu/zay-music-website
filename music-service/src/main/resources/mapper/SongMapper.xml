@@ -10,8 +10,8 @@
     </select>
     <!--这里遇到问题, 参考文章: https://blog.csdn.net/m0_38138387/article/details/79314297-->
     <insert id="insertSong">
-        insert into `song_tab`(`songName`,`singerId`,`albumId`,`songLength`,songTypeId,`createTime`,`fileId`)
-        values (#{songName},#{singerId},#{albumId},#{songLength},#{songType.songTypeId},#{createTime},#{fileId})
+        insert into `song_tab`(`songName`,`singerId`,`albumId`,`songLength`,`songTypeId`,`createTime`,`fileId`)
+        values (#{songName},#{singerId},#{albumId},#{songLength},#{songTypeId},#{createTime},#{fileId})
     </insert>
     <resultMap id="selectSongResultMap" type="pojo.Song">
         <id property="songId" column="songId"/>

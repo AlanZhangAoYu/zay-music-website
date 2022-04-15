@@ -7,7 +7,7 @@ import util.GlobalConstant;
  * 公用数据返回模型
  */
 public class ResponseModel {
-    private String code = "fail";
+    private int code = 0;
     private String message = "";
     private String data;
     /**
@@ -24,10 +24,10 @@ public class ResponseModel {
         model.setCode(GlobalConstant.FAIL);
         return model;
     }
-    public String getCode() {
+    public int getCode() {
         return code;
     }
-    public void setCode(String code) {
+    public void setCode(int code) {
         this.code = code;
     }
     public String getMessage() {

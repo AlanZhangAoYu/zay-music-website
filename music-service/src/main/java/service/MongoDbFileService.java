@@ -138,7 +138,7 @@ public class MongoDbFileService {
             return mongoDbFile.getId();
         }catch (Exception e){
             e.printStackTrace();
-            return GlobalConstant.FAIL;
+            return String.valueOf(GlobalConstant.FAIL);
         }
     }
 }

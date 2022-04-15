@@ -39,8 +39,15 @@ public class SingerService {
         }
         return singerId;
     }
-    public boolean selectSingerByName(String singerName){
+    public int selectSingerByName(String singerName){
         List<Singer> list=singerMapper.selectSingerByName(singerName);
-        return list.size() != 0;
+        int singerId=0;
+        if(list.size() == 0){
+            return GlobalConstant.FAIL;
+        }
+        for (Singer singer : list) {
+            singerId=singer.getSingerId();
+        }
+        return singerId;
     }
 }

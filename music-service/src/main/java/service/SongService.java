@@ -5,7 +5,11 @@ import com.github.pagehelper.PageInfo;
 import mapper.SongMapper;
 import org.springframework.stereotype.Service;
 import pojo.Song;
+import util.GlobalConstant;
+
 import javax.annotation.Resource;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,24 +37,25 @@ public class SongService {
         int singerId=0;
         int albumId=0;
 
-        Map<Object,Object> map=new HashMap<>(7);
+        Map<Object,Object> map = new HashMap<>(7);
         map.put("songName",songMap.get("songName"));
         map.put("songLength",songMap.get("length"));
         map.put("songTypeId",songTypeId);
         map.put("fileId",fileId);
-        if(!singerService.selectSingerByName(singerName)){
+        singerId = singerService.selectSingerByName(singerName);
+        if(singerId == GlobalConstant.FAIL){
             singerId = singerService.insertSinger(singerName);
-        }else {
-
         }
-        if(!albumService.selectAlbumByName(albumName)){
+        albumId = albumService.selectAlbumByName(albumName);
+        if(albumId == GlobalConstant.FAIL){
             albumId = albumService.insertAlbum(albumName,singerId);
-        }else {
-
         }
         map.put("singerId",singerId);
         map.put("albumId",albumId);
-        map.put("createTime",System.currentTimeMillis());
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Timestamp now = new Timestamp(System.currentTimeMillis());
+        String date = df.format(now);
+        map.put("createTime",date);
         return songMapper.insertSong(map);
     }
 }

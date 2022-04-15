@@ -1,19 +1,14 @@
 package controller;
 
 import com.alibaba.fastjson.JSON;
-import org.bson.types.Binary;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import pojo.MongoDbFile;
 import pojo.Song;
-import service.AlbumService;
 import service.MongoDbFileService;
 import service.SongService;
-import util.Md5Util;
 import util.Mp3Util;
 import util.MultipartFileToFileUtil;
 import javax.annotation.Resource;
@@ -41,27 +36,15 @@ public class SongController {
         try {
             File newFile = MultipartFileToFileUtil.multipartFileToFile(file);
             HashMap<String,String> songMap= Mp3Util.getMp3Info(newFile);
+            //MongoDb先存文件，返回文件Id值，再将信息存到MySQL中
             String fileId= mongoDbFileService.uploadFile(file);
             songService.insertSong(songMap,songTypeId,fileId);
-            return JSON.toJSONString(songMap);
+            map.put("msg", "Upload Successfully");
+            return JSON.toJSONString(map);
         } catch (Exception e) {
             e.printStackTrace();
+            map.put("msg","Upload Failed");
             return JSON.toJSONString(map);
         }
-        /*try{
-
-            MongoDbFile mongoDbFile=new MongoDbFile(file.getOriginalFilename(), file.getContentType(), file.getSize(),
-                    new Binary(file.getBytes()));
-            mongoDbFile.setMd5(Md5Util.getMd5InputStream(file.getInputStream()));
-            songService.uploadSongFile(mongoDbFile);
-            map.put("code","0");
-            map.put("msg","上传成功!");
-            return JSON.toJSONString(map);
-        }catch (Exception e){
-            e.printStackTrace();
-            map.put("code","-1");
-            map.put("msg","上传失败!");
-            return JSON.toJSONString(map);
-        }*/
     }
 }

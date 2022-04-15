@@ -110,16 +110,20 @@
   }
   function uploadMp3File(){
     let parma = new FormData();
-    parma.append('songType',addForm.songType);
+    parma.append('songTypeId',addForm.songType);
     addForm.fileList.forEach((value,index) => {
       parma.append('file',value.raw);
     });
     axios.post('http://127.0.0.2:8081/uploadSongFile',parma).then(function (response){
-      ElMessage({
-        showClose: true,
-        message: '上传成功',
-        type: 'success',
-      })
+      if(response.data.msg === 'Upload Successfully'){
+        ElMessage({
+          showClose: true,
+          message: '上传成功',
+          type: 'success',
+        })
+      }else {
+        ElMessage.error('上传失败');
+      }
     }).catch(function (error){
       ElMessage.error('上传失败');
       console.log(error);

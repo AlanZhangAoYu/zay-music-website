@@ -24,9 +24,16 @@ public class AlbumService {
         PageInfo<Album> pageInfo = new PageInfo<>(list);
         return pageInfo.getList();
     }
-    public boolean selectAlbumByName(String albumName){
+    public int selectAlbumByName(String albumName){
         List<Album> list=albumMapper.selectAlbumByName(albumName);
-        return list.size() != 0;
+        int albumId = 0;
+        if(list.size() == 0){
+            return GlobalConstant.FAIL;
+        }
+        for (Album album : list) {
+            albumId=album.getAlbumId();
+        }
+        return albumId;
     }
     public int insertAlbum(String albumName,int singerId){
         Map<Object, Object> map=new HashMap<>(4);
