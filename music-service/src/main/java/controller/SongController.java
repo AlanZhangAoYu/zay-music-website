@@ -1,6 +1,7 @@
 package controller;
 
 import com.alibaba.fastjson.JSON;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -30,7 +31,15 @@ public class SongController {
         List<Song> list=songService.selectAllSong(pageNum,pageSize);
         return JSON.toJSONString(list);
     }
+    @GetMapping(value = "/selectAllSongCount")
+    public String selectAllSongCountController(){
+        HashMap<String,Integer> map=new HashMap<>(1);
+        int result = songService.selectAllSongCount();
+        map.put("AllSongCount",result);
+        return JSON.toJSONString(map);
+    }
     @PostMapping("/uploadSongFile")
+    @Transactional(rollbackFor = Exception.class)
     public String uploadSongFileController(@RequestParam("file") MultipartFile file,@RequestParam("songTypeId") int songTypeId){
         HashMap<String,String> map=new HashMap<>(2);
         try {

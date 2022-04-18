@@ -4,13 +4,14 @@
     <span><el-button type="primary" @click="searchSongVisible = true">搜索歌曲</el-button></span>
     <span><el-button type="primary" @click="addSongVisible = true">添加歌曲</el-button></span>
     <div id="song_table">
-      <el-table :data="tableData" height="350" border stripe style="width: 100%">
+      <el-table :data="songTableData" height="350" border stripe style="width: 100%">
         <el-table-column prop="songId" label="歌曲ID" width="180" />
         <el-table-column prop="songName" label="歌曲名" width="180" />
         <el-table-column prop="singerName" label="歌手" width="80" />
         <el-table-column prop="albumName" label="所属专辑" width="180" />
         <el-table-column prop="songType" label="歌曲种类" width="180" />
-        <el-table-column prop="createTime" label="歌曲上传时间" width="180" />
+        <el-table-column prop="songLength" label="歌曲长度" width="80" />
+        <el-table-column prop="createTime" label="上传时间" width="180" />
         <el-table-column fixed="right" label="操作" width="270">
           <template #default>
             <el-button type="primary" size="small" @click="">歌曲详情</el-button>
@@ -20,7 +21,13 @@
         </el-table-column>
       </el-table>
     </div>
-    <el-pagination background layout="prev, pager, next" :total="10" />
+    <el-pagination background
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+        :current-page="currentPage"
+        :page-size="5"
+        layout="prev, pager, next, jumper"
+        :total="totalLength"/>
   </div>
 
 
@@ -136,12 +143,37 @@
         let item={};
         item.songTypeId = response.data[it].songTypeId;
         item.songTypeName = response.data[it].songTypeName;
-        console.log(item);
         songTypeList.push(item);
       }
     }).catch(function (error){
       return [];
     });
+  }
+  let songTableData=[];
+  let totalLength=0;
+  selectAllSongCount();
+  selectAllSong();
+  function selectAllSongCount(){
+    axios.get('http://127.0.0.2:8081/selectAllSongCount').then(function(response){
+      totalLength = response.data.AllSongCount;
+    })
+  }
+  function selectAllSong(){
+    axios.get('http://127.0.0.2:8081/selectAllSong',{params:{pageNum : 1, pageSize : 5}})
+        .then(function(response){
+          for(let i in response.data){
+            let data={
+              songId: response.data[i].songId,
+              songName: response.data[i].songName,
+              singerName: response.data[i].singer.singerName,
+              albumName: response.data[i].album.albumName,
+              songType: response.data[i].songType.songTypeName,
+              songLength: response.data[i].songLength,
+              createTime: response.data[i].createTime
+            };
+            songTableData.push(data);
+          }
+        })
   }
 </script>
 

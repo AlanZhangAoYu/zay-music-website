@@ -31,6 +31,9 @@ public class SongService {
         PageInfo<Song> pageInfo=new PageInfo<>(list);
         return pageInfo.getList();
     }
+    public int selectAllSongCount(){
+        return songMapper.selectAllSongCount();
+    }
     public int insertSong(HashMap<String,String> songMap,int songTypeId,String fileId){
         String singerName= songMap.get("artist");
         String albumName= songMap.get("album");
