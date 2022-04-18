@@ -4,7 +4,7 @@
     <span><el-button type="primary" @click="searchSongVisible = true">搜索歌曲</el-button></span>
     <span><el-button type="primary" @click="addSongVisible = true">添加歌曲</el-button></span>
     <div id="song_table">
-      <el-table :data="songTableData" height="350" border stripe style="width: 100%">
+      <el-table :data="songTableData" :key="Math.random()" height="500" border stripe style="width: 100%">
         <el-table-column prop="songId" label="歌曲ID" width="180" />
         <el-table-column prop="songName" label="歌曲名" width="180" />
         <el-table-column prop="singerName" label="歌手" width="80" />
@@ -13,9 +13,9 @@
         <el-table-column prop="songLength" label="歌曲长度" width="80" />
         <el-table-column prop="createTime" label="上传时间" width="180" />
         <el-table-column fixed="right" label="操作" width="270">
-          <template #default>
-            <el-button type="primary" size="small" @click="">歌曲详情</el-button>
-            <el-button type="primary" size="small" @click="">下载歌曲</el-button>
+          <template #default="scope">
+            <el-button type="primary" size="small" @click="showDetails(scope.$index);detailVisible = true">歌曲详情</el-button>
+            <el-button type="info" size="small" @click="">下载歌曲</el-button>
             <el-button type="danger" size="small">删除</el-button>
           </template>
         </el-table-column>
@@ -87,6 +87,44 @@
       </span>
     </template>
   </el-dialog>
+
+
+  <el-dialog v-model="detailVisible" title="歌曲详情" width="30%" draggable>
+    <el-form :label-position="labelPosition"
+        label-width="100px"
+        style="max-width: 460px">
+      <el-form-item label="歌曲ID">
+        {{detailTable.songId}}
+      </el-form-item>
+      <el-form-item label="歌曲名">
+        {{detailTable.songName}}
+      </el-form-item>
+      <el-form-item label="所属专辑">
+        {{detailTable.albumName}}
+      </el-form-item>
+      <el-form-item label="歌手">
+        {{detailTable.singerName}}
+      </el-form-item>
+      <el-form-item label="歌曲种类">
+        {{detailTable.songType}}
+      </el-form-item>
+      <el-form-item label="歌曲长度">
+        {{detailTable.songLength}}
+      </el-form-item>
+      <el-form-item label="上传时间">
+        {{detailTable.createTime}}
+      </el-form-item>
+      <el-form-item label="文件ID">
+        {{detailTable.fileId}}
+      </el-form-item>
+    </el-form>
+    <template #footer>
+      <span class="dialog-footer">
+        <el-button @click="detailVisible = false">取消</el-button>
+        <el-button type="primary" @click="detailVisible = false">确认</el-button>
+      </span>
+    </template>
+  </el-dialog>
 </template>
 
 <script setup>
@@ -95,10 +133,11 @@
   import axios from 'axios'
   import {ElMessage} from "element-plus";
 
-  const searchSongVisible = ref(false);
-  const addSongVisible = ref(false);
-  let songTypeList = [];
-  selectSongType();
+  let searchSongVisible = ref(false);
+  let addSongVisible = ref(false);
+  let detailVisible = ref(false);
+  let songTypeList = selectSongType();
+  const labelPosition = ref('right');
   const searchForm = reactive({
     songId: '',
     songName: '',
@@ -137,43 +176,78 @@
     });
   }
   function selectSongType(){
+    let result=[];
     axios.get('http://127.0.0.2:8081/selectAllSongType').then(function (response){
       for (let it in response.data) {
         //JavaScript是什么够吧东西，这个it到底是什么东西?一个循环遍历卡了半天，靠!!!
         let item={};
         item.songTypeId = response.data[it].songTypeId;
         item.songTypeName = response.data[it].songTypeName;
-        songTypeList.push(item);
+        result.push(item);
       }
     }).catch(function (error){
       return [];
     });
+    return result;
   }
-  let songTableData=[];
-  let totalLength=0;
-  selectAllSongCount();
-  selectAllSong();
+  let songTableData = selectAllSong();
+  let totalLength=selectAllSongCount();
   function selectAllSongCount(){
+    let result=0;
     axios.get('http://127.0.0.2:8081/selectAllSongCount').then(function(response){
-      totalLength = response.data.AllSongCount;
+      result = response.data.AllSongCount;
     })
+    return result;
   }
   function selectAllSong(){
-    axios.get('http://127.0.0.2:8081/selectAllSong',{params:{pageNum : 1, pageSize : 5}})
+    let result = [];
+    axios.get('http://127.0.0.2:8081/selectAllSong',{params:{pageNum : 1, pageSize : 10}})
         .then(function(response){
           for(let i in response.data){
-            let data={
+            result.push({
               songId: response.data[i].songId,
               songName: response.data[i].songName,
               singerName: response.data[i].singer.singerName,
               albumName: response.data[i].album.albumName,
               songType: response.data[i].songType.songTypeName,
               songLength: response.data[i].songLength,
-              createTime: response.data[i].createTime
-            };
-            songTableData.push(data);
+              createTime: dateFormat(response.data[i].createTime),
+              fileId: response.data[i].fileId
+            });
           }
         })
+    return result;
+  }
+  let detailTable = reactive({
+    songId: '',
+    songName: '',
+    singerName: '',
+    albumName: '',
+    songType: '',
+    songLength: '',
+    createTime: '',
+    fileId: ''
+  });
+  function showDetails (index){
+    detailTable.songId = songTableData[index].songId;
+    detailTable.songName = songTableData[index].songName;
+    detailTable.singerName = songTableData[index].singerName;
+    detailTable.albumName = songTableData[index].albumName;
+    detailTable.songType = songTableData[index].songType;
+    detailTable.songLength = songTableData[index].songLength;
+    detailTable.createTime = songTableData[index].createTime;
+    detailTable.fileId = songTableData[index].fileId;
+    detailVisible = true;
+  }
+  function dateFormat(time){
+    let date = new Date(time);
+    let year = date.getFullYear();
+    let month = date.getMonth()+1;
+    let day = date.getDate();
+    let hour = date.getHours();
+    let min = date.getMinutes();
+    let second = date.getSeconds();
+    return year + "-" + month + "-" + day + " " + hour + ":" + min + ":" + second;
   }
 </script>
 
