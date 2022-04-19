@@ -4,7 +4,7 @@
     <span><el-button type="primary" @click="searchSongVisible = true">搜索歌曲</el-button></span>
     <span><el-button type="primary" @click="addSongVisible = true">添加歌曲</el-button></span>
     <div id="song_table">
-      <el-table :data="songTableData" :key="Math.random()" height="500" border stripe style="width: 100%">
+      <el-table :data="songTableData" :key="randomKey" height="500" border stripe style="width: 100%">
         <el-table-column prop="songId" label="歌曲ID" width="180" />
         <el-table-column prop="songName" label="歌曲名" width="180" />
         <el-table-column prop="singerName" label="歌手" width="80" />
@@ -21,13 +21,16 @@
         </el-table-column>
       </el-table>
     </div>
-    <el-pagination background
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-        :current-page="currentPage"
-        :page-size="5"
-        layout="prev, pager, next, jumper"
-        :total="totalLength"/>
+    <div class="pagination">
+      <el-pagination
+          background
+          @current-change="handleCurrentChange"
+          :current-page="currentPage"
+          :page-size="10"
+          layout="total,prev, pager, next, jumper"
+          :total="totalLength"/>
+    </div>
+
   </div>
 
 
@@ -115,7 +118,7 @@
         {{detailTable.createTime}}
       </el-form-item>
       <el-form-item label="文件ID">
-        {{detailTable.fileId}}
+        {{detailTable.fileId}}<el-button type="text" @click="previewSongFile()">预览歌曲</el-button>
       </el-form-item>
     </el-form>
     <template #footer>
@@ -128,15 +131,21 @@
 </template>
 
 <script setup>
-  import {reactive, ref} from "vue";
-  import { UploadFilled } from '@element-plus/icons-vue'
-  import axios from 'axios'
-  import {ElMessage} from "element-plus";
+import {reactive, ref} from "vue";
+import axios from 'axios'
+import {ElMessage} from "element-plus";
 
-  let searchSongVisible = ref(false);
+let searchSongVisible = ref(false);
   let addSongVisible = ref(false);
   let detailVisible = ref(false);
   let songTypeList = selectSongType();
+  console.log(songTypeList);
+  let totalLength = selectAllSongCount();
+  console.log(totalLength);
+  let currentPage = 1;
+  let songTableData = selectAllSong(currentPage);
+  console.log(songTableData);
+  let randomKey = ref(Math.random());
   const labelPosition = ref('right');
   const searchForm = reactive({
     songId: '',
@@ -175,47 +184,37 @@
       console.log(error);
     });
   }
-  function selectSongType(){
+  async function selectSongType(){
     let result=[];
-    axios.get('http://127.0.0.2:8081/selectAllSongType').then(function (response){
-      for (let it in response.data) {
-        //JavaScript是什么够吧东西，这个it到底是什么东西?一个循环遍历卡了半天，靠!!!
-        let item={};
-        item.songTypeId = response.data[it].songTypeId;
-        item.songTypeName = response.data[it].songTypeName;
-        result.push(item);
-      }
-    }).catch(function (error){
-      return [];
-    });
+    let response = await axios.get('http://127.0.0.2:8081/selectAllSongType');
+    for (let it in response.data) {
+      //JavaScript是什么够吧东西，这个it到底是什么东西?一个循环遍历卡了半天，靠!!!
+      let item={};
+      item.songTypeId = response.data[it].songTypeId;
+      item.songTypeName = response.data[it].songTypeName;
+      result.push(item);
+    }
     return result;
   }
-  let songTableData = selectAllSong();
-  let totalLength=selectAllSongCount();
-  function selectAllSongCount(){
-    let result=0;
-    axios.get('http://127.0.0.2:8081/selectAllSongCount').then(function(response){
-      result = response.data.AllSongCount;
-    })
-    return result;
+  async function selectAllSongCount(){
+    let response = await axios.get('http://127.0.0.2:8081/selectAllSongCount');
+    return response.data.AllSongCount;
   }
-  function selectAllSong(){
+  async function selectAllSong(pageNum){
     let result = [];
-    axios.get('http://127.0.0.2:8081/selectAllSong',{params:{pageNum : 1, pageSize : 10}})
-        .then(function(response){
-          for(let i in response.data){
-            result.push({
-              songId: response.data[i].songId,
-              songName: response.data[i].songName,
-              singerName: response.data[i].singer.singerName,
-              albumName: response.data[i].album.albumName,
-              songType: response.data[i].songType.songTypeName,
-              songLength: response.data[i].songLength,
-              createTime: dateFormat(response.data[i].createTime),
-              fileId: response.data[i].fileId
-            });
-          }
-        })
+    let response = await axios.get('http://127.0.0.2:8081/selectAllSong',{params:{pageNum : pageNum, pageSize : 10}});
+    for(let i in response.data){
+      result.push({
+        songId: response.data[i].songId,
+        songName: response.data[i].songName,
+        singerName: response.data[i].singer.singerName,
+        albumName: response.data[i].album.albumName,
+        songType: response.data[i].songType.songTypeName,
+        songLength: response.data[i].songLength,
+        createTime: dateFormat(response.data[i].createTime),
+        fileId: response.data[i].fileId
+      });
+    }
     return result;
   }
   let detailTable = reactive({
@@ -238,6 +237,19 @@
     detailTable.createTime = songTableData[index].createTime;
     detailTable.fileId = songTableData[index].fileId;
     detailVisible = true;
+  }
+  function previewSongFile(){
+    window.open("http://127.0.0.2:8081/previewSongFile/"+detailTable.fileId);
+  }
+  function handleCurrentChange (val) {
+    currentPage = val;
+  }
+  function getInfo(data){
+    let result;
+    data.then((res) =>{
+      result = res;
+    });
+    return result;
   }
   function dateFormat(time){
     let date = new Date(time);
