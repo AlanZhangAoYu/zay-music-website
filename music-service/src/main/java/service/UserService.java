@@ -38,7 +38,7 @@ public class UserService {
     public HashMap<String,String> userLoginService(String userAccount, String userPassword){
         ArrayList<User> list=userMapper.selectUserByAccount(userAccount);
         HashMap<String,String> map=new HashMap<>(3);
-        if(list.size() == 0){
+        if(list.isEmpty()){
             map.put("code","1");
             map.put("msg","Not Found User");
             return map;

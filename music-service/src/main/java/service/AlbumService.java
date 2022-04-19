@@ -27,7 +27,7 @@ public class AlbumService {
     public int selectAlbumByName(String albumName){
         List<Album> list=albumMapper.selectAlbumByName(albumName);
         int albumId = 0;
-        if(list.size() == 0){
+        if(list.isEmpty()){
             return GlobalConstant.FAIL;
         }
         for (Album album : list) {

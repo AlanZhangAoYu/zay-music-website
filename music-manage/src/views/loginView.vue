@@ -58,7 +58,7 @@
   }
 </script>
 
-<style>
+<style scoped>
 	#login_window {
 		margin: 0px;
 		height: 100vh;

@@ -19,7 +19,7 @@ public class AdminService {
     public HashMap<String,String> adminLoginService(String adminAccount,String adminPassword) {
         ArrayList<Admin> list=adminMapper.selectAdminByAccount(adminAccount);
         HashMap<String,String> map=new HashMap<>(3);
-        if(list.size() == 0){
+        if(list.isEmpty()){
             //数据库中没有查到该管理员
             map.put("code","1");
             map.put("msg","Not Found Admin");

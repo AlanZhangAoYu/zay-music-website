@@ -42,7 +42,7 @@ public class SingerService {
     public int selectSingerByName(String singerName){
         List<Singer> list=singerMapper.selectSingerByName(singerName);
         int singerId=0;
-        if(list.size() == 0){
+        if(list.isEmpty()){
             return GlobalConstant.FAIL;
         }
         for (Singer singer : list) {
