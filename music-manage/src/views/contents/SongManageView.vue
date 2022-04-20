@@ -4,13 +4,13 @@
     <span><el-button type="primary" @click="searchSongVisible = true">搜索歌曲</el-button></span>
     <span><el-button type="primary" @click="addSongVisible = true">添加歌曲</el-button></span>
     <div id="song_table">
-      <el-table :data="songTableData" :key="randomKey" height="500" border stripe style="width: 100%">
-        <el-table-column prop="songId" label="歌曲ID" width="180" />
+      <el-table :data="songTableData.list" height="500" border stripe style="width: 100%">
+        <el-table-column prop="songId" label="歌曲ID" width="100" />
         <el-table-column prop="songName" label="歌曲名" width="180" />
-        <el-table-column prop="singerName" label="歌手" width="80" />
-        <el-table-column prop="albumName" label="所属专辑" width="180" />
-        <el-table-column prop="songType" label="歌曲种类" width="180" />
-        <el-table-column prop="songLength" label="歌曲长度" width="80" />
+        <el-table-column prop="singerName" label="歌手" width="140" />
+        <el-table-column prop="albumName" label="所属专辑" width="140" />
+        <el-table-column prop="songType" label="歌曲种类" width="100" />
+        <el-table-column prop="songLength" label="歌曲长度" width="100" />
         <el-table-column prop="createTime" label="上传时间" width="180" />
         <el-table-column fixed="right" label="操作" width="270">
           <template #default="scope">
@@ -25,12 +25,11 @@
       <el-pagination
           background
           @current-change="handleCurrentChange"
-          :current-page="currentPage"
+          :current-page="currentPage.value"
           :page-size="10"
           layout="total,prev, pager, next, jumper"
-          :total="totalLength"/>
+          :total="totalLength.value"/>
     </div>
-
   </div>
 
 
@@ -131,21 +130,24 @@
 </template>
 
 <script setup>
-import {reactive, ref} from "vue";
-import axios from 'axios'
-import {ElMessage} from "element-plus";
+  import {reactive, ref} from 'vue';
+  import axios from 'axios'
+  import {ElMessage} from 'element-plus';
+  import { UploadFilled } from '@element-plus/icons-vue';
 
-let searchSongVisible = ref(false);
+  let searchSongVisible = ref(false);
   let addSongVisible = ref(false);
   let detailVisible = ref(false);
-  let songTypeList = selectSongType();
+  let songTypeList = [];
+  selectSongType();
   console.log(songTypeList);
-  let totalLength = selectAllSongCount();
-  console.log(totalLength);
-  let currentPage = 1;
-  let songTableData = selectAllSong(currentPage);
-  console.log(songTableData);
-  let randomKey = ref(Math.random());
+  let totalLength = ref(0);
+  selectAllSongCount();
+  console.log(totalLength.value);
+  let currentPage = ref(1);
+  let songTableData = reactive({list:[]});
+  selectAllSong(currentPage.value);
+  console.log(songTableData.list);
   const labelPosition = ref('right');
   const searchForm = reactive({
     songId: '',
@@ -184,38 +186,38 @@ let searchSongVisible = ref(false);
       console.log(error);
     });
   }
-  async function selectSongType(){
-    let result=[];
-    let response = await axios.get('http://127.0.0.2:8081/selectAllSongType');
-    for (let it in response.data) {
-      //JavaScript是什么够吧东西，这个it到底是什么东西?一个循环遍历卡了半天，靠!!!
-      let item={};
-      item.songTypeId = response.data[it].songTypeId;
-      item.songTypeName = response.data[it].songTypeName;
-      result.push(item);
-    }
-    return result;
+  function selectSongType(){
+    axios.get('http://127.0.0.2:8081/selectAllSongType').then((response) =>{
+      for(let i in response.data){
+        songTypeList.push({
+          songTypeId: response.data[i].songTypeId,
+          songTypeName: response.data[i].songTypeName
+        });
+      }
+    });
   }
-  async function selectAllSongCount(){
-    let response = await axios.get('http://127.0.0.2:8081/selectAllSongCount');
-    return response.data.AllSongCount;
+  function selectAllSongCount(){
+    axios.get('http://127.0.0.2:8081/selectAllSongCount').then((response) =>{
+      totalLength.value = response.data.AllSongCount;
+    });
   }
-  async function selectAllSong(pageNum){
-    let result = [];
-    let response = await axios.get('http://127.0.0.2:8081/selectAllSong',{params:{pageNum : pageNum, pageSize : 10}});
-    for(let i in response.data){
-      result.push({
-        songId: response.data[i].songId,
-        songName: response.data[i].songName,
-        singerName: response.data[i].singer.singerName,
-        albumName: response.data[i].album.albumName,
-        songType: response.data[i].songType.songTypeName,
-        songLength: response.data[i].songLength,
-        createTime: dateFormat(response.data[i].createTime),
-        fileId: response.data[i].fileId
-      });
-    }
-    return result;
+  function selectAllSong(pageNum){
+    axios.get('http://127.0.0.2:8081/selectAllSong',{params:{pageNum : pageNum, pageSize : 10}})
+        .then((response) =>{
+          songTableData.list = [];
+          for(let i in response.data){
+            songTableData.list.push({
+              songId: response.data[i].songId,
+              songName: response.data[i].songName,
+              singerName: response.data[i].singer.singerName,
+              albumName: response.data[i].album.albumName,
+              songType: response.data[i].songType.songTypeName,
+              songLength: response.data[i].songLength,
+              createTime: dateFormat(response.data[i].createTime),
+              fileId: response.data[i].fileId
+            });
+          }
+        });
   }
   let detailTable = reactive({
     songId: '',
@@ -228,28 +230,22 @@ let searchSongVisible = ref(false);
     fileId: ''
   });
   function showDetails (index){
-    detailTable.songId = songTableData[index].songId;
-    detailTable.songName = songTableData[index].songName;
-    detailTable.singerName = songTableData[index].singerName;
-    detailTable.albumName = songTableData[index].albumName;
-    detailTable.songType = songTableData[index].songType;
-    detailTable.songLength = songTableData[index].songLength;
-    detailTable.createTime = songTableData[index].createTime;
-    detailTable.fileId = songTableData[index].fileId;
+    detailTable.songId = songTableData.list[index].songId;
+    detailTable.songName = songTableData.list[index].songName;
+    detailTable.singerName = songTableData.list[index].singerName;
+    detailTable.albumName = songTableData.list[index].albumName;
+    detailTable.songType = songTableData.list[index].songType;
+    detailTable.songLength = songTableData.list[index].songLength;
+    detailTable.createTime = songTableData.list[index].createTime;
+    detailTable.fileId = songTableData.list[index].fileId;
     detailVisible = true;
   }
   function previewSongFile(){
     window.open("http://127.0.0.2:8081/previewSongFile/"+detailTable.fileId);
   }
   function handleCurrentChange (val) {
-    currentPage = val;
-  }
-  function getInfo(data){
-    let result;
-    data.then((res) =>{
-      result = res;
-    });
-    return result;
+    currentPage.value = val;
+    selectAllSong(currentPage.value);
   }
   function dateFormat(time){
     let date = new Date(time);
