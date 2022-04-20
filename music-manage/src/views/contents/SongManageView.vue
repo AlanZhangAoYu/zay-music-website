@@ -15,7 +15,7 @@
         <el-table-column fixed="right" label="操作" width="270">
           <template #default="scope">
             <el-button type="primary" size="small" @click="showDetails(scope.$index);detailVisible = true">歌曲详情</el-button>
-            <el-button type="info" size="small" @click="">下载歌曲</el-button>
+            <el-button type="warning" size="small" @click="">下载歌曲</el-button>
             <el-button type="danger" size="small">删除</el-button>
           </template>
         </el-table-column>
@@ -28,7 +28,7 @@
           :current-page="currentPage.value"
           :page-size="10"
           layout="total,prev, pager, next, jumper"
-          :total="totalLength.value"/>
+          :total="totalLength.total"/>
     </div>
   </div>
 
@@ -140,14 +140,14 @@
   let detailVisible = ref(false);
   let songTypeList = [];
   selectSongType();
-  console.log(songTypeList);
-  let totalLength = ref(0);
+  let totalLength = reactive({
+    total:''
+  });
   selectAllSongCount();
   console.log(totalLength.value);
   let currentPage = ref(1);
   let songTableData = reactive({list:[]});
   selectAllSong(currentPage.value);
-  console.log(songTableData.list);
   const labelPosition = ref('right');
   const searchForm = reactive({
     songId: '',
@@ -198,7 +198,8 @@
   }
   function selectAllSongCount(){
     axios.get('http://127.0.0.2:8081/selectAllSongCount').then((response) =>{
-      totalLength.value = response.data.AllSongCount;
+      totalLength.total = response.data.AllSongCount;
+      console.log(totalLength.total);
     });
   }
   function selectAllSong(pageNum){

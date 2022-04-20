@@ -6,7 +6,7 @@
     <span><el-button type="primary" @click="searchUserVisible = true">搜索用户</el-button></span>
     <span><el-button type="primary" @click="addUserVisible = true">添加新用户</el-button></span>
     <div id="user_table">
-      <el-table :data="userTableData" height="350" border stripe style="width: 100%">
+      <el-table :data="userTableData" height="500" border stripe style="width: 100%">
         <el-table-column prop="userAccount" label="用户账号" width="180" />
         <el-table-column prop="userName" label="用户名" width="180" />
         <el-table-column prop="userSex" label="性别" width="80" />
