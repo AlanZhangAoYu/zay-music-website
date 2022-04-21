@@ -2,7 +2,6 @@ package mapper;
 
 import org.apache.ibatis.annotations.Mapper;
 import pojo.Singer;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 

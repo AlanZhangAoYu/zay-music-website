@@ -6,22 +6,167 @@
     <el-table :data="singerTableData.list" height="500" border stripe style="width: 100%">
       <el-table-column prop="singerId" label="歌手ID" width="100" />
       <el-table-column prop="singerName" label="歌手名称" width="180" />
-      <el-table-column prop="singerBirth" label="歌手生日" width="140" />
-      <el-table-column prop="singerIntroduction" label="歌手简介" width="140" />
+      <el-table-column prop="singerBirth" label="歌手生日" width="100" />
+      <el-table-column prop="singerIntroduction" label="歌手简介" width="260" />
       <el-table-column prop="singerLocation" label="歌手国籍" width="100" />
-      <el-table-column prop="singerImgId" label="歌手图片" width="180" />
+      <el-table-column prop="singerImgId" label="歌手图片" width="230">
+        <el-image style="width: 100px; height: 100px" :src="singerImgUrl.value">
+          <template #error>
+            <div class="image-slot">
+              <el-icon><icon-picture /></el-icon>
+            </div>
+          </template>
+        </el-image>
+      </el-table-column>
       <el-table-column fixed="right" label="操作" width="270">
         <template #default="scope">
-          <el-button type="primary" size="small" @click="">编辑信息</el-button>
+          <el-button type="primary" size="small" @click="editSingerVisible = true">编辑信息</el-button>
           <el-button type="danger" size="small">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
   </div>
+  <div class="pagination">
+    <el-pagination
+        background
+        @current-change="handleCurrentChange"
+        :current-page="currentPage.value"
+        :page-size="10"
+        layout="total,prev, pager, next, jumper"
+        :total="totalLength.total"/>
+  </div>
+
+
+  <el-dialog v-model="editSingerVisible" title="编辑歌手信息">
+    <el-form :model="editSingerList" :label-position="labelPosition">
+      <el-form-item label="歌手ID">
+        <el-input v-model="editSingerList.singerId" disabled placeholder="{{ detailTable.singerId }}" />
+      </el-form-item>
+      <el-form-item label="歌手名" >
+        <el-input v-model="editSingerList.singerName" />
+      </el-form-item>
+      <el-form-item label="歌手生日" >
+        <el-col :span="11">
+          <el-date-picker
+              v-model="editSingerList.singerBirth"
+              type="date"
+              placeholder="选择日期"
+              style="width: 100%"/>
+        </el-col>
+      </el-form-item>
+      <el-form-item label="歌手简介" >
+        <el-input v-model="editSingerList.singerIntroduction" type="textarea" />
+      </el-form-item>
+      <el-form-item label="歌手国籍" >
+        <el-input v-model="editSingerList.singerLocation" />
+      </el-form-item>
+      <el-form-item label="上传歌手图片" >
+        <el-upload
+            class="upload-demo"
+            :show-file-list="true"
+            :auto-upload="false"
+            :file-list="imgForm.fileList"
+            :before-upload="beforeAvatarUpload"
+            :http-request="addImgList"
+            :headers="{'Content-Type': 'multipart/form-data'}">
+          <el-button type="primary">点击上传图片</el-button>
+          <template #tip>
+            <div class="el-upload__tip">
+              jpg/png 文件小于 500KB.
+            </div>
+          </template>
+        </el-upload>
+      </el-form-item>
+    </el-form>
+    <template #footer>
+      <span class="dialog-footer">
+        <el-button @click="dialogFormVisible = false">取消</el-button>
+        <el-button type="primary" @click="dialogFormVisible = false">提交修改</el-button>
+      </span>
+    </template>
+  </el-dialog>
 </template>
 
 <script setup>
+  import {reactive, ref} from 'vue';
+  import axios from 'axios';
+  import { Picture as IconPicture } from '@element-plus/icons-vue';
+  import { Plus } from '@element-plus/icons-vue';
+  import {ElMessage} from 'element-plus';
+
+  const labelPosition = ref('top');
+  let singerTableData=reactive({list:[]});
+  let currentPage = ref(1);
+  let totalLength = reactive({total:''});
+  let singerImgUrl = ref('');
+  const editSingerVisible = ref(false);
+  selectAllSinger(currentPage.value);
+  let editSingerList=reactive({
+    singerId: '',
+    singerName: '',
+    singerBirth: '',
+    singerIntroduction: '',
+    singerLocation: '',
+    singerImg:''
+  });
+  function selectAllSinger(pageNum){
+    axios.get('http://127.0.0.2:8081/selectAllSinger',{params:{pageNum : pageNum, pageSize : 10}}).then((response) => {
+      for(let i in response.data){
+        singerTableData.list.push({
+          singerId: response.data[i].singerId,
+          singerName: response.data[i].singerName,
+          singerBirth: dateFormat(response.data[i].singerBirth),
+          singerIntroduction: response.data[i].singerIntroduction,
+          singerLocation: response.data[i].singerLocation,
+          singerImgId: response.data[i].singerImgId
+        });
+      }
+    });
+  }
+  let detailTable = reactive({
+    singerId: '',
+    singerName: '',
+    singerBirth: '',
+    singerIntroduction: '',
+    singerLocation: '',
+    singerImgId: '',
+  });
+  const imgForm = reactive({
+    fileList: []
+  });
+  function addImgList(option){
+    //将要上传的文件暂时放在imgForm.fileList中
+    //此函数替代默认的<el-upload>上传行为
+    imgForm.fileList.push(option);
+  }
+  function beforeAvatarUpload(rawFile) {
+    if (rawFile.type !== 'image/jpeg') {
+      ElMessage.error('Avatar picture must be JPG format!')
+      return false
+    } else if (rawFile.size / 1024 / 1024 > 2) {
+      ElMessage.error('Avatar picture size can not exceed 2MB!')
+      return false
+    }
+    return true
+  }
+  function dateFormat(time){
+    let date = new Date(time);
+    let year = date.getFullYear();
+    let month = date.getMonth()+1;
+    let day = date.getDate();
+    return year + "-" + month + "-" + day;
+  }
 </script>
 
 <style>
+.image-slot {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  background: var(--el-fill-color-light);
+  color: var(--el-text-color-secondary);
+  font-size: 30px;
+}
 </style>
