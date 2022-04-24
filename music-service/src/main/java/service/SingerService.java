@@ -26,6 +26,9 @@ public class SingerService {
         PageInfo<Singer> pageInfo = new PageInfo<>(list);
         return pageInfo.getList();
     }
+    public int selectAllSingerCount(){
+        return singerMapper.selectAllSingerCount();
+    }
     public int insertSinger(String singerName){
         Map<Object,Object> map = new HashMap<>(3);
         map.put("singerName",singerName);
@@ -49,5 +52,8 @@ public class SingerService {
             singerId=singer.getSingerId();
         }
         return singerId;
+    }
+    public int updateSingerInfo(HashMap<Object,Object> map){
+        return singerMapper.updateSingerInfo(map);
     }
 }

@@ -70,7 +70,7 @@
         </el-select>
       </el-form-item>
       <el-form-item>
-        <el-upload class="upload-demo" drag multiple :limit="3" :auto-upload="false"
+        <el-upload class="upload-demo" drag multiple :limit="1" :auto-upload="false"
         :http-request="addFileList" :file-list="addForm.fileList" :headers="{'Content-Type': 'multipart/form-data'}">
           <el-icon class="el-icon--upload"><upload-filled /></el-icon>
           <div class="el-upload__text">

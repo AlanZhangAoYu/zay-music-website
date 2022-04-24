@@ -8,27 +8,30 @@
     <select id="selectSingerByName" resultType="pojo.Singer" parameterType="String">
         select `singerId`,`singerName` from `singer_tab` where `singerName` = #{singerName}
     </select>
+    <select id="selectAllSingerCount" resultType="Integer">
+        select count(`singerId`) from `singer_tab`
+    </select>
     <insert id="insertSinger">
         insert into `singer_tab`(`singerName`,`singerBirth`,`singerImgId`)
         values (#{singerName},#{singerBirth},#{singerImgId})
     </insert>
-    <update id="updateSingerInfo" parameterType="pojo.Singer">
+    <update id="updateSingerInfo">
         update `singer_tab`
         <set>
             <if test="singerName != null and singerName != ''">
-                `singerName` = #{singerName}
+                `singerName` = #{singerName},
             </if>
-            <if test="singerBirth != null and singerBirth != ''">
-                `singerBirth` = #{singerBirth}
+            <if test="singerBirth != null">
+                `singerBirth` = #{singerBirth},
             </if>
             <if test="singerIntroduction != null and singerIntroduction != ''">
-                `singerIntroduction` = #{singerIntroduction}
+                `singerIntroduction` = #{singerIntroduction},
             </if>
             <if test="singerLocation != null and singerLocation != ''">
-                `singerLocation` = #{singerLocation}
+                `singerLocation` = #{singerLocation},
             </if>
             <if test="singerImgId != null and singerImgId != ''">
-                `singerImgId` = #{singerImgId}
+                `singerImgId` = #{singerImgId},
             </if>
         </set>
         where `singerId` = #{singerId}

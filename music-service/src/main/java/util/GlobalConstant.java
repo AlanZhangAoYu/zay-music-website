@@ -28,4 +28,5 @@ public class GlobalConstant {
     public static final long DEFAULT_DATE = 0L;
     public static final String SUCCESS = "success";
     public static final int FAIL = -0xffff;
+    public static final String FAIL_STR = "failed";
 }

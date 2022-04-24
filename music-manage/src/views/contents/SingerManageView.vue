@@ -10,7 +10,8 @@
       <el-table-column prop="singerIntroduction" label="歌手简介" width="260" />
       <el-table-column prop="singerLocation" label="歌手国籍" width="100" />
       <el-table-column prop="singerImgId" label="歌手图片" width="230">
-        <el-image style="width: 100px; height: 100px" :src="singerImgUrl.value">
+        <el-image style="width: 100px; height: 100px"
+                  :src="singerTableData.list">
           <template #error>
             <div class="image-slot">
               <el-icon><icon-picture /></el-icon>
@@ -20,7 +21,7 @@
       </el-table-column>
       <el-table-column fixed="right" label="操作" width="270">
         <template #default="scope">
-          <el-button type="primary" size="small" @click="editSingerVisible = true">编辑信息</el-button>
+          <el-button type="primary" size="small" @click="editSinger(scope.$index);editSingerVisible = true">编辑信息</el-button>
           <el-button type="danger" size="small">删除</el-button>
         </template>
       </el-table-column>
@@ -37,10 +38,10 @@
   </div>
 
 
-  <el-dialog v-model="editSingerVisible" title="编辑歌手信息">
+  <el-dialog v-model="editSingerVisible" title="编辑歌手信息(不改的项请不要填)">
     <el-form :model="editSingerList" :label-position="labelPosition">
       <el-form-item label="歌手ID">
-        <el-input v-model="editSingerList.singerId" disabled placeholder="{{ detailTable.singerId }}" />
+        <el-input v-model="editSingerList.singerId" disabled :placeholder="editSingerList.singerId" />
       </el-form-item>
       <el-form-item label="歌手名" >
         <el-input v-model="editSingerList.singerName" />
@@ -63,12 +64,11 @@
       <el-form-item label="上传歌手图片" >
         <el-upload
             class="upload-demo"
-            :show-file-list="true"
             :auto-upload="false"
             :file-list="imgForm.fileList"
-            :before-upload="beforeAvatarUpload"
             :http-request="addImgList"
-            :headers="{'Content-Type': 'multipart/form-data'}">
+            :headers="{'Content-Type': 'multipart/form-data'}"
+            limit="1">
           <el-button type="primary">点击上传图片</el-button>
           <template #tip>
             <div class="el-upload__tip">
@@ -80,8 +80,8 @@
     </el-form>
     <template #footer>
       <span class="dialog-footer">
-        <el-button @click="dialogFormVisible = false">取消</el-button>
-        <el-button type="primary" @click="dialogFormVisible = false">提交修改</el-button>
+        <el-button @click="editSingerVisible = false">取消</el-button>
+        <el-button type="primary" @click="commitEditList">提交修改</el-button>
       </span>
     </template>
   </el-dialog>
@@ -98,7 +98,7 @@
   let singerTableData=reactive({list:[]});
   let currentPage = ref(1);
   let totalLength = reactive({total:''});
-  let singerImgUrl = ref('');
+  selectAllSingerCount();
   const editSingerVisible = ref(false);
   selectAllSinger(currentPage.value);
   let editSingerList=reactive({
@@ -107,30 +107,62 @@
     singerBirth: '',
     singerIntroduction: '',
     singerLocation: '',
-    singerImg:''
   });
   function selectAllSinger(pageNum){
-    axios.get('http://127.0.0.2:8081/selectAllSinger',{params:{pageNum : pageNum, pageSize : 10}}).then((response) => {
-      for(let i in response.data){
-        singerTableData.list.push({
-          singerId: response.data[i].singerId,
-          singerName: response.data[i].singerName,
-          singerBirth: dateFormat(response.data[i].singerBirth),
-          singerIntroduction: response.data[i].singerIntroduction,
-          singerLocation: response.data[i].singerLocation,
-          singerImgId: response.data[i].singerImgId
-        });
-      }
+    axios.get('http://127.0.0.2:8081/selectAllSinger',{params:{pageNum : pageNum, pageSize : 10}})
+        .then((response) => {
+          singerTableData.list = [];
+          for(let i in response.data){
+            singerTableData.list.push({
+              singerId: response.data[i].singerId,
+              singerName: response.data[i].singerName,
+              singerBirth: dateFormat(response.data[i].singerBirth),
+              singerIntroduction: response.data[i].singerIntroduction,
+              singerLocation: response.data[i].singerLocation,
+              singerImgId: response.data[i].singerImgId
+            });
+          }
     });
   }
-  let detailTable = reactive({
-    singerId: '',
-    singerName: '',
-    singerBirth: '',
-    singerIntroduction: '',
-    singerLocation: '',
-    singerImgId: '',
-  });
+  function selectAllSingerCount(){
+    axios.get('http://127.0.0.2:8081/selectAllSingerCount').then((response) => {
+      totalLength.total = response.data.AllSingerCount;
+    });
+  }
+  function editSinger(index){
+    editSingerList.singerId = singerTableData.list[index].singerId;
+  }
+  function commitEditList(){
+    let parma = new FormData();
+    parma.append('singerId',editSingerList.singerId);
+    parma.append('singerName',editSingerList.singerName);
+    let newBirthday=editSingerList.singerBirth.getFullYear() + '-'
+        + (editSingerList.singerBirth.getMonth() + 1) + '-'
+        + editSingerList.singerBirth.getDate() + ' '
+        + editSingerList.singerBirth.getHours() + ':'
+        + editSingerList.singerBirth.getMinutes() + ':'
+        + editSingerList.singerBirth.getSeconds();
+    parma.append('singerBirth',newBirthday);
+    parma.append('singerIntroduction',editSingerList.singerIntroduction);
+    parma.append('singerLocation',editSingerList.singerLocation);
+    imgForm.fileList.forEach((value,index) => {
+      parma.append('file',value.raw);
+    });
+    axios.post('http://127.0.0.2:8081/updateSingerInfo',parma).then((response) => {
+          if(response.data.msg === 'failed'){
+            ElMessage.error('更改失败');
+          }else {
+            ElMessage({
+              message: '更改成功',
+              type: 'success',
+            });
+          }
+        });
+  }
+  function handleCurrentChange (val) {
+    currentPage.value = val;
+    selectAllSinger(currentPage.value);
+  }
   const imgForm = reactive({
     fileList: []
   });
@@ -138,6 +170,7 @@
     //将要上传的文件暂时放在imgForm.fileList中
     //此函数替代默认的<el-upload>上传行为
     imgForm.fileList.push(option);
+    console.log(imgForm.fileList);
   }
   function beforeAvatarUpload(rawFile) {
     if (rawFile.type !== 'image/jpeg') {

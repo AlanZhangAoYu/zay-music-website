@@ -36,4 +36,17 @@ public interface SingerMapper {
      * @return 返回的歌手信息
      */
     List<Singer> selectSingerByName(String singerName);
+
+    /**
+     * 查询所有歌手的数量
+     * @return 所有歌手的数量
+     */
+    int selectAllSingerCount();
+
+    /**
+     * 更新歌手的信息
+     * @param map 传入的更改信息的表
+     * @return 返回数据库中受影响的行数
+     */
+    int updateSingerInfo(Map<Object,Object> map);
 }
