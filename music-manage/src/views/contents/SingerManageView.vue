@@ -19,11 +19,12 @@
               </div>
             </template>
           </el-image>
+          <el-button type="primary" size="small" @click="editSinger(row.singerId);uploadSingerImgVisible = true">上传图片</el-button>
         </template>
       </el-table-column>
       <el-table-column fixed="right" label="操作" width="270">
-        <template #default="scope">
-          <el-button type="primary" size="small" @click="editSinger(scope.$index);editSingerVisible = true">编辑信息</el-button>
+        <template #default={row}>
+          <el-button type="primary" size="small" @click="editSinger(row.singerId);editSingerVisible = true">编辑信息</el-button>
           <el-button type="danger" size="small">删除</el-button>
         </template>
       </el-table-column>
@@ -38,6 +39,30 @@
         layout="total,prev, pager, next, jumper"
         :total="totalLength.total"/>
   </div>
+
+
+  <el-dialog v-model="uploadSingerImgVisible" title="上传歌手图像" width="30%">
+    <el-upload
+        class="upload-demo"
+        :auto-upload="false"
+        :file-list="imgForm.fileList"
+        :http-request="addImgList"
+        :headers="{'Content-Type': 'multipart/form-data'}"
+        limit="1">
+      <el-button type="primary">点击上传图片</el-button>
+      <template #tip>
+        <div class="el-upload__tip">
+          jpg/png 文件小于 500KB.
+        </div>
+      </template>
+    </el-upload>
+    <template #footer>
+      <span class="dialog-footer">
+        <el-button @click="uploadSingerImgVisible = false">取消</el-button>
+        <el-button type="primary" @click="uploadSingerImg">提交修改</el-button>
+      </span>
+    </template>
+  </el-dialog>
 
 
   <el-dialog v-model="editSingerVisible" title="编辑歌手信息(不改的项请不要填)">
@@ -63,22 +88,6 @@
       <el-form-item label="歌手国籍" >
         <el-input v-model="editSingerList.singerLocation" />
       </el-form-item>
-      <el-form-item label="上传歌手图片" >
-        <el-upload
-            class="upload-demo"
-            :auto-upload="false"
-            :file-list="imgForm.fileList"
-            :http-request="addImgList"
-            :headers="{'Content-Type': 'multipart/form-data'}"
-            limit="1">
-          <el-button type="primary">点击上传图片</el-button>
-          <template #tip>
-            <div class="el-upload__tip">
-              jpg/png 文件小于 500KB.
-            </div>
-          </template>
-        </el-upload>
-      </el-form-item>
     </el-form>
     <template #footer>
       <span class="dialog-footer">
@@ -102,6 +111,7 @@
   let totalLength = reactive({total:''});
   selectAllSingerCount();
   const editSingerVisible = ref(false);
+  const uploadSingerImgVisible = ref(false);
   selectAllSinger(currentPage.value);
   let editSingerList=reactive({
     singerId: '',
@@ -132,25 +142,11 @@
     });
   }
   function editSinger(index){
-    editSingerList.singerId = singerTableData.list[index].singerId;
+    editSingerList.singerId = index;
   }
-  function commitEditList(){
+  function uploadSingerImg(){
     let parma = new FormData();
     parma.append('singerId',editSingerList.singerId);
-    parma.append('singerName',editSingerList.singerName);
-    if(editSingerList.singerBirth !== ''){
-      let newBirthday=editSingerList.singerBirth.getFullYear() + '-'
-          + (editSingerList.singerBirth.getMonth() + 1) + '-'
-          + editSingerList.singerBirth.getDate() + ' '
-          + editSingerList.singerBirth.getHours() + ':'
-          + editSingerList.singerBirth.getMinutes() + ':'
-          + editSingerList.singerBirth.getSeconds();
-      parma.append('singerBirth',newBirthday);
-    }else {
-      parma.append('singerBirth',editSingerList.singerBirth);
-    }
-    parma.append('singerIntroduction',editSingerList.singerIntroduction);
-    parma.append('singerLocation',editSingerList.singerLocation);
     if(imgForm.fileList.length !== 0){
       imgForm.fileList.forEach((value,index) => {
         parma.append('file',value.raw);
@@ -158,6 +154,33 @@
     }else{
       parma.append('file',null);
     }
+    axios.post('http://127.0.0.2:8081/updateSingerImg',parma).then((response) => {
+      if(response.data.msg === 'failed'){
+        ElMessage.error('更改失败');
+      }else {
+        ElMessage({
+          message: '更改成功',
+          type: 'success',
+        });
+      }
+    });
+  }
+  function commitEditList(){
+    let parma = {};
+    parma.singerId = editSingerList.singerId;
+    parma.singerName = editSingerList.singerName;
+    if(editSingerList.singerBirth !== ''){
+      let newBirthday=editSingerList.singerBirth.getFullYear() + '-'
+          + (editSingerList.singerBirth.getMonth() + 1) + '-'
+          + editSingerList.singerBirth.getDate() + ' '
+          + editSingerList.singerBirth.getHours() + ':'
+          + editSingerList.singerBirth.getMinutes() + ':'
+          + editSingerList.singerBirth.getSeconds();
+      parma.singerBirth = newBirthday;
+    }
+    parma.singerIntroduction = editSingerList.singerIntroduction;
+    parma.singerLocation = editSingerList.singerLocation;
+    console.log(parma);
     axios.post('http://127.0.0.2:8081/updateSingerInfo',parma).then((response) => {
           if(response.data.msg === 'failed'){
             ElMessage.error('更改失败');
