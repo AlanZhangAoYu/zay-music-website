@@ -35,6 +35,9 @@ public class AlbumService {
         }
         return albumId;
     }
+    public int selectAllAlbumCount(){
+        return albumMapper.selectAllAlbumCount();
+    }
     public int insertAlbum(String albumName,int singerId){
         Map<Object, Object> map=new HashMap<>(4);
         map.put("albumName",albumName);

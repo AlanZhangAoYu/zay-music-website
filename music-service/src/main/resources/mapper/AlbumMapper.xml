@@ -10,6 +10,9 @@
     <select id="selectAlbumByName" resultType="pojo.Album" parameterType="String">
         select `albumId` from `album_tab` where `albumName` like #{albumName}
     </select>
+    <select id="selectAllAlbumCount" resultType="Integer">
+        select count(`albumId`) from `album_tab`
+    </select>
     <insert id="insertAlbum">
         insert into `album_tab`(`albumName`,`singerId`,`year`,`albumImgId`)
         values (#{albumName},#{singerId},#{year},#{albumImgId})

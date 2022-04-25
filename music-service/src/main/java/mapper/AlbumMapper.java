@@ -30,4 +30,9 @@ public interface AlbumMapper {
      */
     List<Album> selectAlbumByName(String albumName);
 
+    /**
+     * 查询所有的专辑数量
+     * @return 返回所有的专辑数量
+     */
+    int selectAllAlbumCount();
 }
