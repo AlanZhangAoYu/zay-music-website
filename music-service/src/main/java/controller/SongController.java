@@ -58,8 +58,8 @@ public class SongController {
             return JSON.toJSONString(map);
         }
     }
-    @GetMapping(value = "/previewSongFile/{id}")
-    public ResponseEntity<Object> previewSongFile(@PathVariable("id") String id){
+    @GetMapping(value = "/previewFile/{id}")
+    public ResponseEntity<Object> previewFile(@PathVariable("id") String id){
         Optional<MongoDbFile> file=mongoDbFileService.getFileById(id);
         return file.<ResponseEntity<Object>>map(mongoDbFile -> ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "fileName=" + mongoDbFile.getName())

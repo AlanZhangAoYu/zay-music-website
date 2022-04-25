@@ -9,15 +9,17 @@
       <el-table-column prop="singerBirth" label="歌手生日" width="100" />
       <el-table-column prop="singerIntroduction" label="歌手简介" width="260" />
       <el-table-column prop="singerLocation" label="歌手国籍" width="100" />
-      <el-table-column prop="singerImgId" label="歌手图片" width="230">
-        <el-image style="width: 100px; height: 100px"
-                  :src="singerTableData.list">
-          <template #error>
-            <div class="image-slot">
-              <el-icon><icon-picture /></el-icon>
-            </div>
-          </template>
-        </el-image>
+      <el-table-column label="歌手图片" width="230">
+        <template #default={row}>
+          <el-image style="width: 100px; height: 100px"
+                    :src="row.singerImg">
+            <template #error>
+              <div class="image-slot">
+                <el-icon><icon-picture /></el-icon>
+              </div>
+            </template>
+          </el-image>
+        </template>
       </el-table-column>
       <el-table-column fixed="right" label="操作" width="270">
         <template #default="scope">
@@ -119,7 +121,7 @@
               singerBirth: dateFormat(response.data[i].singerBirth),
               singerIntroduction: response.data[i].singerIntroduction,
               singerLocation: response.data[i].singerLocation,
-              singerImgId: response.data[i].singerImgId
+              singerImg: 'http://127.0.0.2:8081/previewFile/'+response.data[i].singerImgId
             });
           }
     });
@@ -136,18 +138,26 @@
     let parma = new FormData();
     parma.append('singerId',editSingerList.singerId);
     parma.append('singerName',editSingerList.singerName);
-    let newBirthday=editSingerList.singerBirth.getFullYear() + '-'
-        + (editSingerList.singerBirth.getMonth() + 1) + '-'
-        + editSingerList.singerBirth.getDate() + ' '
-        + editSingerList.singerBirth.getHours() + ':'
-        + editSingerList.singerBirth.getMinutes() + ':'
-        + editSingerList.singerBirth.getSeconds();
-    parma.append('singerBirth',newBirthday);
+    if(editSingerList.singerBirth !== ''){
+      let newBirthday=editSingerList.singerBirth.getFullYear() + '-'
+          + (editSingerList.singerBirth.getMonth() + 1) + '-'
+          + editSingerList.singerBirth.getDate() + ' '
+          + editSingerList.singerBirth.getHours() + ':'
+          + editSingerList.singerBirth.getMinutes() + ':'
+          + editSingerList.singerBirth.getSeconds();
+      parma.append('singerBirth',newBirthday);
+    }else {
+      parma.append('singerBirth',editSingerList.singerBirth);
+    }
     parma.append('singerIntroduction',editSingerList.singerIntroduction);
     parma.append('singerLocation',editSingerList.singerLocation);
-    imgForm.fileList.forEach((value,index) => {
-      parma.append('file',value.raw);
-    });
+    if(imgForm.fileList.length !== 0){
+      imgForm.fileList.forEach((value,index) => {
+        parma.append('file',value.raw);
+      });
+    }else{
+      parma.append('file',null);
+    }
     axios.post('http://127.0.0.2:8081/updateSingerInfo',parma).then((response) => {
           if(response.data.msg === 'failed'){
             ElMessage.error('更改失败');

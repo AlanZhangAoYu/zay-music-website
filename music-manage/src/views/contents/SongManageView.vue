@@ -242,7 +242,7 @@
     detailVisible = true;
   }
   function previewSongFile(){
-    window.open("http://127.0.0.2:8081/previewSongFile/"+detailTable.fileId);
+    window.open("http://127.0.0.2:8081/previewFile/"+detailTable.fileId);
   }
   function handleCurrentChange (val) {
     currentPage.value = val;

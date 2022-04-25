@@ -47,15 +47,15 @@ public class SingerController {
                                              @RequestParam("singerLocation") String singerLocation){
         HashMap<Object,Object> map=new HashMap<>(6);
         HashMap<String,String> resultMap=new HashMap<>(1);
+        if(!file.isEmpty()){
+            String fileId= mongoDbFileService.uploadFile(file);
+            map.put("singerImgId",fileId);
+        }
         map.put("singerId",singerId);
         map.put("singerName",singerName);
         map.put("singerBirth",singerBirth);
         map.put("singerIntroduction",singerIntroduction);
         map.put("singerLocation",singerLocation);
-        if(file != null){
-            String fileId= mongoDbFileService.uploadFile(file);
-            map.put("singerImgId",fileId);
-        }
         int result = singerService.updateSingerInfo(map);
         if(result == 1){
             resultMap.put("msg", GlobalConstant.SUCCESS);
