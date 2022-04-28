@@ -52,4 +52,7 @@ public class AlbumService {
         }
         return albumId;
     }
+    public int updateAlbumInfo(HashMap<Object,Object> map){
+        return albumMapper.updateAlbumInfo(map);
+    }
 }

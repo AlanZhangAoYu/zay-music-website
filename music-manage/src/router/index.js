@@ -34,6 +34,10 @@ const routes = [
                 path: "/CommentManage",
                 component: () => import("../views/contents/CommentManageView.vue"),
             },
+            {
+                path: "/CollectManage",
+                component: () => import("../views/contents/CollectManageView"),
+            }
         ]
     },
 ];

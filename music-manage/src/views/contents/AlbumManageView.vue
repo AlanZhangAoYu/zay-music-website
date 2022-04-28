@@ -22,8 +22,8 @@
         </template>
       </el-table-column>
       <el-table-column fixed="right" label="操作" width="270">
-        <template #default="scope">
-          <el-button type="primary" size="small" @click="">编辑信息</el-button>
+        <template #default={row}>
+          <el-button type="primary" size="small" @click="editAlbum(row.albumId);editAlbumVisible = true">编辑信息</el-button>
           <el-button type="danger" size="small">删除</el-button>
         </template>
       </el-table-column>
@@ -62,6 +62,27 @@
       </span>
     </template>
   </el-dialog>
+
+
+  <el-dialog v-model="editAlbumVisible" title="编辑专辑信息(不改的项请不要填)" width="30%">
+    <el-form :model="editAlbumList" :label-position="labelPosition">
+      <el-form-item label="专辑ID">
+        <el-input v-model="editAlbumList.albumId" disabled :placeholder="editAlbumList.albumId"/>
+      </el-form-item>
+      <el-form-item label="专辑名">
+        <el-input v-model="editAlbumList.albumName"/>
+      </el-form-item>
+      <el-form-item label="发行年份">
+        <el-input type="number" v-model="editAlbumList.year"/>
+      </el-form-item>
+    </el-form>
+    <template #footer>
+      <span class="dialog-footer">
+        <el-button @click="editAlbumVisible = false">取消</el-button>
+        <el-button type="primary" @click="commitEditList">提交修改</el-button>
+      </span>
+    </template>
+  </el-dialog>
 </template>
 
 <script setup>
@@ -77,10 +98,11 @@
   let totalLength = reactive({total:''});
   const editAlbumVisible = ref(false);
   const uploadAlbumImgVisible = ref(false);
+  const labelPosition = ref('top');
   let editAlbumList = reactive({
     albumId: '',
     albumName: '',
-    tear: ''
+    year: ''
   });
   selectAllAlbumCount();
   selectAllAlbum(currentPage.value);
@@ -115,6 +137,22 @@
       parma.append('file',null);
     }
     axios.post(api.baseUrl.baseUrl+'/updateAlbumImg',parma).then((response) => {
+      if(response.data.msg === 'failed'){
+        ElMessage.error('更改失败');
+      }else {
+        ElMessage({
+          message: '更改成功',
+          type: 'success',
+        });
+      }
+    });
+  }
+  function commitEditList(){
+    let parma = {};
+    parma.albumId = editAlbumList.albumId;
+    parma.albumName = editAlbumList.albumName;
+    parma.year = editAlbumList.year;
+    axios.post(api.baseUrl.baseUrl+'/updateAlbumInfo',parma).then((response) => {
       if(response.data.msg === 'failed'){
         ElMessage.error('更改失败');
       }else {

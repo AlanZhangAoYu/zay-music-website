@@ -17,6 +17,21 @@
         insert into `album_tab`(`albumName`,`singerId`,`year`,`albumImgId`)
         values (#{albumName},#{singerId},#{year},#{albumImgId})
     </insert>
+    <update id="updateAlbumInfo">
+        update `album_tab`
+        <set>
+            <if test="albumName != null and albumName != ''">
+                `albumName` = #{albumName},
+            </if>
+            <if test="year != null and year != ''">
+                `year` = #{year},
+            </if>
+            <if test="albumImgId != null and albumImgId != ''">
+                `albumImgId` = #{albumImgId},
+            </if>
+        </set>
+        where `albumId` = #{albumId}
+    </update>
     <resultMap id="selectAlbumMap" type="pojo.Album">
         <id property="albumId" column="albumId"/>
         <result property="albumName" column="albumName"/>

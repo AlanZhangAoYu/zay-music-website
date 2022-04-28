@@ -67,6 +67,13 @@
 								</router-link>
 							</template>
 						</el-menu-item>
+            <el-menu-item index="7">
+              <template #title>
+                <router-link to="/CollectManage" class="a">
+                  <el-icon><star /></el-icon>收藏管理
+                </router-link>
+              </template>
+            </el-menu-item>
 					</el-menu>
 				</el-scrollbar>
 			</el-aside>
@@ -86,6 +93,7 @@
   import { Mic } from '@element-plus/icons-vue';
   import { Wallet } from '@element-plus/icons-vue';
   import { ChatLineSquare } from '@element-plus/icons-vue';
+  import { Star } from '@element-plus/icons-vue';
   import {useRouter} from 'vue-router';
 
 	const router = useRouter();

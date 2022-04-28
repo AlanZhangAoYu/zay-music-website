@@ -2,6 +2,8 @@ package mapper;
 
 import org.apache.ibatis.annotations.Mapper;
 import pojo.Album;
+
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -35,4 +37,11 @@ public interface AlbumMapper {
      * @return 返回所有的专辑数量
      */
     int selectAllAlbumCount();
+
+    /**
+     * 修改专辑信息
+     * @param map 要修改的信息集合
+     * @return 返回数据库中受影响的行数
+     */
+    int updateAlbumInfo(HashMap<Object,Object> map);
 }

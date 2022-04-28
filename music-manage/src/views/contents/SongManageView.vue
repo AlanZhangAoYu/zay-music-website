@@ -131,9 +131,10 @@
 
 <script setup>
   import {reactive, ref} from 'vue';
-  import axios from 'axios'
+  import axios from 'axios';
   import {ElMessage} from 'element-plus';
   import { UploadFilled } from '@element-plus/icons-vue';
+  import api from '../../router/index';
 
   let searchSongVisible = ref(false);
   let addSongVisible = ref(false);
@@ -171,7 +172,7 @@
     addForm.fileList.forEach((value,index) => {
       parma.append('file',value.raw);
     });
-    axios.post('http://127.0.0.2:8081/uploadSongFile',parma).then(function (response){
+    axios.post(api.baseUrl.baseUrl+'/uploadSongFile',parma).then(function (response){
       if(response.data.msg === 'Upload Successfully'){
         ElMessage({
           showClose: true,
@@ -187,7 +188,7 @@
     });
   }
   function selectSongType(){
-    axios.get('http://127.0.0.2:8081/selectAllSongType').then((response) =>{
+    axios.get(api.baseUrl.baseUrl+'/selectAllSongType').then((response) =>{
       for(let i in response.data){
         songTypeList.push({
           songTypeId: response.data[i].songTypeId,
@@ -197,13 +198,13 @@
     });
   }
   function selectAllSongCount(){
-    axios.get('http://127.0.0.2:8081/selectAllSongCount').then((response) =>{
+    axios.get(api.baseUrl.baseUrl+'/selectAllSongCount').then((response) =>{
       totalLength.total = response.data.AllSongCount;
       console.log(totalLength.total);
     });
   }
   function selectAllSong(pageNum){
-    axios.get('http://127.0.0.2:8081/selectAllSong',{params:{pageNum : pageNum, pageSize : 10}})
+    axios.get(api.baseUrl.baseUrl+'/selectAllSong',{params:{pageNum : pageNum, pageSize : 10}})
         .then((response) =>{
           songTableData.list = [];
           for(let i in response.data){
@@ -242,7 +243,7 @@
     detailVisible = true;
   }
   function previewSongFile(){
-    window.open("http://127.0.0.2:8081/previewFile/"+detailTable.fileId);
+    window.open(api.baseUrl.baseUrl+"/previewFile/"+detailTable.fileId);
   }
   function handleCurrentChange (val) {
     currentPage.value = val;
