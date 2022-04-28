@@ -4,4 +4,8 @@ const {
 module.exports = defineConfig({
 	transpileDependencies: true,
 	lintOnSave: false,
+	devServer: {
+		host: 'localhost',
+		port: 8080
+	}
 });
