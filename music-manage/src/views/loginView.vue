@@ -21,7 +21,8 @@
 	import { useRouter } from 'vue-router';
 	import axios from 'axios';
   import { reactive } from "vue";
-  import { ElMessage } from 'element-plus'
+  import { ElMessage } from 'element-plus';
+  import api from '../router/index';
 
   const router = useRouter();
 	const formLabelAlign = reactive({
@@ -29,7 +30,7 @@
     adminPassword: ''
   });
   function submitForm() {
-    axios.post('http://127.0.0.2:8081/adminLogin',formLabelAlign)
+    axios.post(api.baseUrl.baseUrl+'/adminLogin',formLabelAlign)
         .then(function(response) {
           if(response.data.code === '0'){
             localStorage.setItem('token',response.data.token);

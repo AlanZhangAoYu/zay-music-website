@@ -70,6 +70,7 @@
   import { Picture as IconPicture } from '@element-plus/icons-vue';
   import { Plus } from '@element-plus/icons-vue';
   import {ElMessage} from "element-plus";
+  import api from "@/router";
 
   let albumTableData = reactive({list: []});
   let currentPage = ref(1);
@@ -84,7 +85,7 @@
   selectAllAlbumCount();
   selectAllAlbum(currentPage.value);
   function selectAllAlbum(pageNum){
-    axios.get('http://127.0.0.2:8081/selectAllAlbum',{params:{pageNum : pageNum, pageSize : 10}})
+    axios.get(api.baseUrl.baseUrl+'/selectAllAlbum',{params:{pageNum : pageNum, pageSize : 10}})
         .then((response) => {
           albumTableData.list = [];
           for(let i in response.data){
@@ -93,13 +94,13 @@
               albumName: response.data[i].albumName,
               singerName: response.data[i].singer.singerName,
               year: response.data[i].year,
-              albumImgId: 'http://127.0.0.2:8081/previewFile/'+response.data[i].albumImgId
+              albumImgId: api.baseUrl.baseUrl+'/previewFile/'+response.data[i].albumImgId
             });
           }
         });
   }
   function selectAllAlbumCount(){
-    axios.get('http://127.0.0.2:8081/selectAllAlbumCount').then((response) => {
+    axios.get(api.baseUrl.baseUrl+'/selectAllAlbumCount').then((response) => {
       totalLength.total = response.data.AllAlbumCount;
     });
   }
@@ -113,7 +114,7 @@
     }else{
       parma.append('file',null);
     }
-    axios.post('http://127.0.0.2:8081/updateAlbumImg',parma).then((response) => {
+    axios.post(api.baseUrl.baseUrl+'/updateAlbumImg',parma).then((response) => {
       if(response.data.msg === 'failed'){
         ElMessage.error('更改失败');
       }else {

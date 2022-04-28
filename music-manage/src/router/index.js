@@ -53,5 +53,5 @@ router.beforeEach((name,from,next) =>{
         }
     }
 });
-
-export default router;
+const baseUrl = {baseUrl: 'http://127.0.0.2:8081'};
+export default {router,baseUrl};

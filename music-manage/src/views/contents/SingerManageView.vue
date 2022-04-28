@@ -104,6 +104,7 @@
   import { Picture as IconPicture } from '@element-plus/icons-vue';
   import { Plus } from '@element-plus/icons-vue';
   import {ElMessage} from 'element-plus';
+  import api from '../../router/index';
 
   const labelPosition = ref('top');
   let singerTableData=reactive({list:[]});
@@ -121,7 +122,7 @@
     singerLocation: '',
   });
   function selectAllSinger(pageNum){
-    axios.get('http://127.0.0.2:8081/selectAllSinger',{params:{pageNum : pageNum, pageSize : 10}})
+    axios.get(api.baseUrl.baseUrl+'/selectAllSinger',{params:{pageNum : pageNum, pageSize : 10}})
         .then((response) => {
           singerTableData.list = [];
           for(let i in response.data){
@@ -131,13 +132,13 @@
               singerBirth: dateFormat(response.data[i].singerBirth),
               singerIntroduction: response.data[i].singerIntroduction,
               singerLocation: response.data[i].singerLocation,
-              singerImg: 'http://127.0.0.2:8081/previewFile/'+response.data[i].singerImgId
+              singerImg: api.baseUrl.baseUrl+'/previewFile/'+response.data[i].singerImgId
             });
           }
     });
   }
   function selectAllSingerCount(){
-    axios.get('http://127.0.0.2:8081/selectAllSingerCount').then((response) => {
+    axios.get(api.baseUrl.baseUrl+'/selectAllSingerCount').then((response) => {
       totalLength.total = response.data.AllSingerCount;
     });
   }
@@ -154,7 +155,7 @@
     }else{
       parma.append('file',null);
     }
-    axios.post('http://127.0.0.2:8081/updateSingerImg',parma).then((response) => {
+    axios.post(api.baseUrl.baseUrl+'/updateSingerImg',parma).then((response) => {
       if(response.data.msg === 'failed'){
         ElMessage.error('更改失败');
       }else {
@@ -181,7 +182,7 @@
     parma.singerIntroduction = editSingerList.singerIntroduction;
     parma.singerLocation = editSingerList.singerLocation;
     console.log(parma);
-    axios.post('http://127.0.0.2:8081/updateSingerInfo',parma).then((response) => {
+    axios.post(api.baseUrl.baseUrl+'/updateSingerInfo',parma).then((response) => {
           if(response.data.msg === 'failed'){
             ElMessage.error('更改失败');
           }else {

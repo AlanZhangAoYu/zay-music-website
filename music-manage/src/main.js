@@ -5,11 +5,13 @@ import store from "./store";
 import ElementPlus from "element-plus";
 import "element-plus/dist/index.css";
 import axios from 'axios';
+import api from './router/index'
 
 const app = createApp(App);
 app.use(ElementPlus);
 app.use(store);
-app.use(router);
+app.use(router.router);
+app.$api = api.baseUrl.baseUrl;
 app.mount("#app");
 axios.interceptors.request.use(
     config => {
