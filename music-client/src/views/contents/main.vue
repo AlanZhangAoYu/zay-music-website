@@ -1,12 +1,13 @@
 <template>
   <div id="particles">
     <vue-particles
-        color="#fff"
+        id="particles-js"
+        color="#C0C0C0"
         :particleOpacity="0.7"
-        :particlesNumber="80"
+        :particlesNumber="130"
         shapeType="circle"
         :particleSize="4"
-        linesColor="#fff"
+        linesColor="#C0C0C0"
         :linesWidth="1"
         :lineLinked="true"
         :lineOpacity="0.4"
@@ -17,6 +18,23 @@
         :clickEffect="true"
         clickMode="push">
     </vue-particles>
+    <div id="main">
+      <div id="carousel">
+        <el-carousel :interval="4000" type="card" height="300px">
+          <el-carousel-item v-for="item in 6" :key="item">
+            <h3>{{ item }}</h3>
+          </el-carousel-item>
+        </el-carousel>
+      </div>
+      <div style="position: relative;top: 3%">
+        <div id="recommend_singer">
+          推荐歌手
+        </div>
+        <div id="recommend_album">
+          推荐专辑
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -25,7 +43,55 @@
 </script>
 
 <style scoped>
+#main{
+  position: absolute;
+  top: 60px;
+  width: 100%;
+  height: 100%;
+}
 #particles{
-  background-color: black;
+  background-color: #f9f9f9;
+}
+#carousel{
+  width: 70%;
+  position: relative;
+  left: 14%;
+  background-color: rgba(211,220,230,0.5);
+  padding: 20px;
+  border-radius: 20px;
+}
+#recommend_singer{
+  height: 300px;
+  width: 500px;
+  background-color: rgba(211,220,230,0.5);
+  padding: 20px;
+  border-radius: 20px;
+  position: absolute;
+  left: 14%;
+}
+#recommend_album{
+  height: 300px;
+  width: 500px;
+  background-color: rgba(211,220,230,0.5);
+  padding: 20px;
+  border-radius: 20px;
+  position: absolute;
+  left: 51%;
+}
+.el-carousel__item h3 {
+  color: #475669;
+  font-size: 14px;
+  opacity: 0.75;
+  line-height: 200px;
+  margin: 0;
+  text-align: center;
+}
+
+.el-carousel__item:nth-child(2n) {
+  background-color: #99a9bf;
+}
+
+.el-carousel__item:nth-child(2n + 1) {
+  background-color: #d3dce6;
 }
 </style>
