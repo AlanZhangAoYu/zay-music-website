@@ -1,5 +1,6 @@
 <template>
   <div class="common-layout">
+
     <el-container>
       <el-header>
         <el-menu
@@ -16,9 +17,10 @@
           <el-menu-item index="2"><router-link to="/ListView" class="a">榜单</router-link></el-menu-item>
           <el-menu-item index="3"><router-link to="/SingerView" class="a">歌手</router-link></el-menu-item>
           <el-menu-item index="4"><router-link to="/AlbumView" class="a">专辑</router-link></el-menu-item>
+          <el-button type="primary" :icon="Avatar" circle style="position: absolute;margin-top: 15px;right: 20px;"/>
         </el-menu>
       </el-header>
-      <el-main>
+      <el-main style="width: 100%">
         <router-view/>
       </el-main>
       <el-footer>
@@ -28,13 +30,31 @@
       </el-footer>
     </el-container>
   </div>
+  <el-affix position="bottom" :offset="0">
+    <el-button type="primary" @click="PlayBar">{{ playBarTitle }}</el-button>
+    <div ref="play_bar" style="display: block;width: 100%;background-color: #42b983">
+      播放栏
+    </div>
+  </el-affix>
 </template>
 
 <script setup>
   import {ref} from 'vue';
+  import {Avatar} from '@element-plus/icons-vue';
   const activeIndex = ref('1');
+  let playBarTitle = ref('隐藏播放栏');
+  const play_bar = ref(null);
   const handleSelect = (key, keyPath) => {
     //console.log(key, keyPath);
+  }
+  function PlayBar(){
+    if(playBarTitle.value === '显示播放栏'){
+      play_bar.value.style.display = 'block';
+      playBarTitle.value = '隐藏播放栏';
+    }else {
+      play_bar.value.style.display = 'none';
+      playBarTitle.value = '显示播放栏';
+    }
   }
 </script>
 

@@ -26,7 +26,7 @@
           </el-carousel-item>
         </el-carousel>
       </div>
-      <div style="position: relative;top: 3%">
+      <div style="position: relative;top: 3%;left: 14%">
         <div id="recommend_singer">
           推荐歌手
         </div>
@@ -54,8 +54,7 @@
 }
 #carousel{
   width: 70%;
-  position: relative;
-  left: 14%;
+  margin-left: 14%;
   background-color: rgba(211,220,230,0.5);
   padding: 20px;
   border-radius: 20px;
@@ -66,8 +65,9 @@
   background-color: rgba(211,220,230,0.5);
   padding: 20px;
   border-radius: 20px;
-  position: absolute;
-  left: 14%;
+  float: left;
+  margin-right: 20px;
+  margin-top: 5px;
 }
 #recommend_album{
   height: 300px;
@@ -75,8 +75,8 @@
   background-color: rgba(211,220,230,0.5);
   padding: 20px;
   border-radius: 20px;
-  position: absolute;
-  left: 51%;
+  float: left;
+  margin-top: 5px;
 }
 .el-carousel__item h3 {
   color: #475669;
