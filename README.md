@@ -20,7 +20,6 @@
 >
 > Redis
 >
-> Nginx
 
 #### 数据库建模
 
@@ -33,14 +32,16 @@
   
 - 用户表(user_tab)
 
-  - user_account 账号
+  - user_id 逻辑自增主键
+
+  - user_account 账号（唯一约束）
   - user_password 密码
   - salt 加盐加密字符
   - user_name 用户名
   - user_sex 性别
   - user_birthday 出生日期
-  - phone_number 手机号
-  - email 邮箱
+  - phone_number 手机号（唯一约束）
+  - email 邮箱（唯一约束）
   - user_introduction 个人简介(个性签名)
   - user_location 用户所在地
   - head_img_id  头像文件id
@@ -50,7 +51,7 @@
 - 歌曲表(song_tab)
   - song_id 歌曲id
   - song_name 歌曲名
-  - singer_ids 歌手id列表（歌手id之间用 & 隔开）
+  - singer_id 歌手id
   - album_id 所属专辑id
   - song_type 歌曲类型（华语、粤语、欧美、日韩、轻音乐、古典、其他）
   - create_time 创建时间
@@ -73,11 +74,17 @@
   - album_img_url 专辑封面图片地址
   
 - 音乐收藏表(collect_tab)
+  
+  - collect_id 逻辑自增主键
+  
   - user_account 用户id
   - song_id 歌曲id
   - create_time 创建时间
   
 - 歌曲评论表(song_comment_tab)
+  
+  - comment_id 逻辑自增主键
+  
   - user_account 用户id
   - song_id 歌曲id
   - content 评论详情
@@ -85,11 +92,12 @@
   
 ##### Redis
 
-- 播放记录表(playback_record_tab)(Redis)(若用户重复播放历史记录，就修改本次播放时间为最新，且重复播放次数+1)
+- 播放记录hash表(若用户重复播放历史记录，就修改本次播放时间为最新)
   
-  - **Key**: user_account:song_id:listen_time **Value** 本次播放时间
-  - **Key**: user_account:song_id:full_play **Value** 本次是否完整播放
-  - **Key**: user_account:song_id:play_times **Value** 重复播放次数
+  - **Key**: user_account:song_id **Value**: song_id: {歌曲id} create_time: {最后播放时间}
+- 歌曲播放量表(每当一首歌完整播放完一次，对应的歌曲的song_id:play_count加一)
+  - **Key**: song_id:play_count **Value**:  完整播放次数
+  - 那个有序集合zset又怎么设计????
 
 ##### MongoDB
 
