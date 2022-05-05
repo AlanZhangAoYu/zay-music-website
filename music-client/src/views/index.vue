@@ -10,7 +10,7 @@
             text-color="#fff"
             active-text-color="#ffd04b"
             @select="handleSelect">
-          <img src="../assets/logo.png" width="30" height="30" style="margin-top: 10px;margin-left: 10px;"/>
+          <img src="../assets/image/logo.png" width="30" height="30" style="margin-top: 10px;margin-left: 10px;"/>
           <span style="margin: 10px; color: azure; font-size: 30px;font-family: serif; font-style: oblique;">Zay-music</span>
           <el-menu-item index="1"><router-link to="/MainView" class="a">首页</router-link></el-menu-item>
           <el-menu-item index="2"><router-link to="/ListView" class="a">榜单</router-link></el-menu-item>
@@ -31,8 +31,79 @@
   </div>
   <div class="play_bar_div">
     <el-button type="info" @click="PlayBar" :icon="playBarIcon" style="position: relative;left: 95%;"/>
-    <div ref="play_bar" style="display: none;width: 100%;background-color: #545c64">
-      播放栏
+    <div ref="play_bar" style="display: none;width: 100%;height: 80px;background-color: #545c64;">
+      <div style="position: relative;margin: 0 auto;width: 960px;height: 80px;">
+        <div style="position: absolute;width: 160px;height: 80px;">
+          <!--播放条左部分: 上一首 播放/暂停 下一首-->
+          <a class="play_bar_icon play_bar_prev"></a>
+          <a class="play_bar_icon play_bar_play"></a>
+          <a class="play_bar_icon play_bar_next"></a>
+        </div>
+        <div style="position: absolute;left: 190px;width: 60px;height: 60px;">
+          <!--播放条中间部分: 专辑封面 -->
+          <a>
+            <el-image style="height: 60px;width: 60px;margin-top: 10px">
+              <template #error>
+                <div class="image-slot">
+                  <el-icon color="#f8f8f8"><icon-picture /></el-icon>
+                </div>
+              </template>
+            </el-image>
+          </a>
+        </div>
+        <div style="position: absolute;left: 270px;width: 400px;height: 80px">
+          <!--播放条中间上半部分: 歌曲名 长度-->
+          <div style="padding-top: 18px;height: 24px;cursor: default;">
+            <!--歌曲名-->
+            <div style="float: left;width: 290px;height: 24px;overflow: hidden;"><span style="color: #f9f9f9;font-size: 13px">{{songName}}</span></div>
+            <!--歌曲长度-->
+            <div style="float: right;height: 24px;">
+              <span style="color: #f9f9f9;font-size: 13px">00:00/00:00</span>
+            </div>
+          </div>
+          <!--播放条中间下半部分: 进度条-->
+          <div style="margin-top: 11px;height: 5px;">
+            <el-slider v-model="songTime" style="height: 0"/>
+          </div>
+        </div>
+        <div style="position: absolute;left: 710px;width: 260px;height: 80px;">
+          <!--播放条右部分: 音量控制按钮-->
+          <div style="position: relative;top: 30px;width: 16px;">
+            <span class="play_bar_icon" style="width: 16px;height: 16px;background-position: -64px -195px;"></span>
+          </div>
+          <!--音量控制面板-->
+          <div style="height: 124px;width: 38px;background-color: #545c64;position: absolute;top: -100px;left: -13px">
+            <el-slider v-model="volume" vertical height="100px" width="29px"/>
+          </div>
+          <div style="position: relative;top: 15px;left: 50px;">
+            <!--播放模式按钮-->
+            <a class="play_bar_icon" style="background-position: -64px -179px;width: 16px;height: 16px;line-height: 16px;"></a>
+            <!--播放模式选项面板(列表循环、单曲循环、随机播放)-->
+            <div style="height: 115px;width: 120px;background-color: #545c64;position: absolute;top: -130px;">
+              <ul style="padding: 10px;margin: 0">
+                <li style="height: 30px;">
+                  <a href="javascript:void(0);">
+                    <span class="play_bar_icon" style="margin: 5px;background-position: -64px -179px;height: 16px;width: 16px;float: left"></span>
+                    <span style="color: #f9f9f9;float: left">列表循环</span>
+                  </a>
+                </li>
+                <li style="height: 30px;">
+                  <a href="javascript:void(0);">
+                    <span class="play_bar_icon" style="margin: 5px;background-position: 0 -179px;height: 16px;width: 16px;float: left"></span>
+                    <span style="color: #f9f9f9;float: left">单曲循环</span>
+                  </a>
+                </li>
+                <li style="height: 30px;">
+                  <a href="javascript:void(0);">
+                    <span class="play_bar_icon" style="margin: 5px;background-position: -128px -179px;height: 16px;width: 16px;float: left"></span>
+                    <span style="color: #f9f9f9;float: left">随机播放</span>
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -42,9 +113,13 @@
   import {Avatar} from '@element-plus/icons-vue';
   import {ArrowUpBold} from '@element-plus/icons-vue';
   import {ArrowDownBold} from '@element-plus/icons-vue';
+  import { Picture as IconPicture } from '@element-plus/icons-vue'
   const activeIndex = ref('1');
   const play_bar = ref(null);
+  let songName = ref('暂无歌曲');
   let playBarIcon = ref(ArrowUpBold);
+  let songTime = ref(0);
+  let volume = ref(50);
   const handleSelect = (key, keyPath) => {
     //console.log(key, keyPath);
   }
@@ -74,6 +149,34 @@
     position: fixed;
     bottom: 0;
   }
+  .play_bar_icon {
+    display: block;
+    cursor: pointer;
+    background: url(../assets/image/btn.png) no-repeat;
+  }
+  .play_bar_prev{
+    width: 36px;
+    height: 36px;
+    background-position: 0 -143px;
+    position: absolute;
+    margin-left: -7px;
+    margin-top: 22px;
+  }
+  .play_bar_play{
+    width: 60px;
+    height: 60px;
+    position: absolute;
+    margin-left: 43px;
+    margin-top: 10px;
+  }
+  .play_bar_next{
+    width: 36px;
+    height: 36px;
+    background-position: -144px -143px;
+    position: absolute;
+    margin-left: 117px;
+    margin-top: 22px;
+  }
   .el-header{
     padding: 0;
   }
@@ -82,5 +185,13 @@
   }
   .el-footer{
     padding: 0;
+  }
+  .image-slot {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    font-size: 50px;
   }
 </style>
