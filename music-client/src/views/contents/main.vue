@@ -43,6 +43,9 @@
 </script>
 
 <style scoped>
+#particles-js{
+  width: 100%;
+}
 #main{
   position: absolute;
   top: 60px;

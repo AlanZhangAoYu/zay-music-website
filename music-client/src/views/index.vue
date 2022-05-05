@@ -1,6 +1,5 @@
 <template>
   <div class="common-layout">
-
     <el-container>
       <el-header>
         <el-menu
@@ -30,30 +29,32 @@
       </el-footer>
     </el-container>
   </div>
-  <el-affix position="bottom" :offset="0">
-    <el-button type="primary" @click="PlayBar">{{ playBarTitle }}</el-button>
-    <div ref="play_bar" style="display: block;width: 100%;background-color: #42b983">
+  <div class="play_bar_div">
+    <el-button type="info" @click="PlayBar" :icon="playBarIcon" style="position: relative;left: 95%;"/>
+    <div ref="play_bar" style="display: none;width: 100%;background-color: #545c64">
       播放栏
     </div>
-  </el-affix>
+  </div>
 </template>
 
 <script setup>
   import {ref} from 'vue';
   import {Avatar} from '@element-plus/icons-vue';
+  import {ArrowUpBold} from '@element-plus/icons-vue';
+  import {ArrowDownBold} from '@element-plus/icons-vue';
   const activeIndex = ref('1');
-  let playBarTitle = ref('隐藏播放栏');
   const play_bar = ref(null);
+  let playBarIcon = ref(ArrowUpBold);
   const handleSelect = (key, keyPath) => {
     //console.log(key, keyPath);
   }
   function PlayBar(){
-    if(playBarTitle.value === '显示播放栏'){
+    if(play_bar.value.style.display === 'none'){
       play_bar.value.style.display = 'block';
-      playBarTitle.value = '隐藏播放栏';
+      playBarIcon.value = ArrowDownBold;
     }else {
       play_bar.value.style.display = 'none';
-      playBarTitle.value = '显示播放栏';
+      playBarIcon.value = ArrowUpBold;
     }
   }
 </script>
@@ -67,6 +68,11 @@
     background-color: #545c64;
     height: 70px;
     width: 100%;
+  }
+  .play_bar_div{
+    width: 100%;
+    position: fixed;
+    bottom: 0;
   }
   .el-header{
     padding: 0;
