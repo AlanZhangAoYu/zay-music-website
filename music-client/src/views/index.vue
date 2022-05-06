@@ -102,6 +102,21 @@
               </ul>
             </div>
           </div>
+          <div style="position: relative;top: 0;left: 100px;">
+            <!--歌曲下载按钮-->
+            <a class="play_bar_icon" style="width: 16px;height: 16px;background-position: -240px -32px;" href="javascript:void(0);"></a>
+          </div>
+          <div style="position: relative;top: -23px;left: 150px;">
+            <!--播放列表按钮-->
+            <el-button :icon="Fold" @click="playList = true" style="height: 35px;width: 35px;" circle></el-button>
+            <!--播放列表抽屉主窗口-->
+            <el-drawer
+                v-model="playList"
+                title="播放列表"
+                :direction="direction">
+              <span>Hi, there!</span>
+            </el-drawer>
+          </div>
         </div>
       </div>
     </div>
@@ -113,9 +128,12 @@
   import {Avatar} from '@element-plus/icons-vue';
   import {ArrowUpBold} from '@element-plus/icons-vue';
   import {ArrowDownBold} from '@element-plus/icons-vue';
-  import { Picture as IconPicture } from '@element-plus/icons-vue'
+  import { Picture as IconPicture } from '@element-plus/icons-vue';
+  import {Fold} from '@element-plus/icons-vue';
   const activeIndex = ref('1');
   const play_bar = ref(null);
+  const direction = ref('rtl');
+  const playList = ref(false);
   let songName = ref('暂无歌曲');
   let playBarIcon = ref(ArrowUpBold);
   let songTime = ref(0);
