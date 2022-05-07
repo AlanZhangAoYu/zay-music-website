@@ -5,7 +5,7 @@ import store from "./store";
 import ElementPlus from "element-plus";
 import "element-plus/dist/index.css";
 import axios from 'axios';
-import api from './router/index'
+import api from './router/index';
 
 const app = createApp(App);
 app.use(ElementPlus);

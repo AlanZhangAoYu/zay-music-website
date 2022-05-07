@@ -41,6 +41,7 @@ public class WebInterceptorConfig implements WebMvcConfigurer {
         excludePath.add("/userRegister");
         excludePath.add("/userLogin");
         excludePath.add("/previewFile/*");
+        excludePath.add("/select*");
         registry.addInterceptor(tokenInterceptor)
                 .addPathPatterns("/**")
                 .excludePathPatterns(excludePath);
