@@ -36,7 +36,7 @@
         <div style="position: absolute;width: 160px;height: 80px;">
           <!--播放条左部分: 上一首 播放/暂停 下一首-->
           <a class="play_bar_icon play_bar_prev"></a>
-          <a class="play_bar_icon play_bar_play"></a>
+          <a class="play_bar_icon play_bar_play" @click="playOrSuspend" ref="play_bar_play"></a>
           <a class="play_bar_icon play_bar_next"></a>
         </div>
         <div style="position: absolute;left: 190px;width: 60px;height: 60px;">
@@ -69,37 +69,38 @@
         <div style="position: absolute;left: 710px;width: 260px;height: 80px;">
           <!--播放条右部分: 音量控制按钮-->
           <div style="position: relative;top: 30px;width: 16px;">
-            <span class="play_bar_icon" style="width: 16px;height: 16px;background-position: -64px -195px;"></span>
+            <span class="play_bar_icon volume_button" @mouseover="volumeAppear"></span>
           </div>
           <!--音量控制面板-->
-          <div style="height: 124px;width: 38px;background-color: #545c64;position: absolute;top: -100px;left: -13px">
+          <div ref="volume_panel" style="display: none;height: 124px;width: 38px;background-color: #545c64;position: absolute;top: -100px;left: -13px"
+               @mouseleave="volumeDisappear">
             <el-slider v-model="volume" vertical height="100px" width="29px"/>
           </div>
           <div style="position: relative;top: 15px;left: 50px;">
             <!--播放模式按钮-->
-            <a class="play_bar_icon" style="background-position: -64px -179px;width: 16px;height: 16px;line-height: 16px;"></a>
+            <a ref="playback_mode_button" class="play_bar_icon playback_mode_button" @click="playbackModePanelAppear"></a>
             <!--播放模式选项面板(列表循环、单曲循环、随机播放)-->
-            <div style="height: 115px;width: 120px;background-color: #545c64;position: absolute;top: -130px;">
-              <ul style="padding: 10px;margin: 0">
-                <li style="height: 30px;">
-                  <a href="javascript:void(0);">
+            <div ref="playback_mode_panel" style="display: none;height: 115px;width: 120px;background-color: #545c64;position: absolute;top: -130px;">
+              <div style="padding: 10px;margin: 0">
+                <div style="height: 30px;">
+                  <div>
                     <span class="play_bar_icon" style="margin: 5px;background-position: -64px -179px;height: 16px;width: 16px;float: left"></span>
-                    <span style="color: #f9f9f9;float: left">列表循环</span>
-                  </a>
-                </li>
-                <li style="height: 30px;">
-                  <a href="javascript:void(0);">
+                    <el-button style="float: left;color: #f9f9f9;" type="text" @click="selectPlayMode0" plain>列表循环</el-button>
+                  </div>
+                </div>
+                <div style="height: 30px;">
+                  <div>
                     <span class="play_bar_icon" style="margin: 5px;background-position: 0 -179px;height: 16px;width: 16px;float: left"></span>
-                    <span style="color: #f9f9f9;float: left">单曲循环</span>
-                  </a>
-                </li>
-                <li style="height: 30px;">
-                  <a href="javascript:void(0);">
+                    <el-button style="float: left;color: #f9f9f9;" type="text" @click="selectPlayMode1" plain>单曲循环</el-button>
+                  </div>
+                </div>
+                <div style="height: 30px;">
+                  <div>
                     <span class="play_bar_icon" style="margin: 5px;background-position: -128px -179px;height: 16px;width: 16px;float: left"></span>
-                    <span style="color: #f9f9f9;float: left">随机播放</span>
-                  </a>
-                </li>
-              </ul>
+                    <el-button style="float: left;color: #f9f9f9;" type="text" @click="selectPlayMode2" plain>随机播放</el-button>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
           <div style="position: relative;top: 0;left: 100px;">
@@ -132,12 +133,22 @@
   import {Fold} from '@element-plus/icons-vue';
   const activeIndex = ref('1');
   const play_bar = ref(null);
+  const play_bar_play = ref(null);
+  const volume_panel = ref(null);
+  const playback_mode_panel = ref(null);
+  const playback_mode_button = ref(null);
   const direction = ref('rtl');
   const playList = ref(false);
   let songName = ref('暂无歌曲');
   let playBarIcon = ref(ArrowUpBold);
+  //当前歌曲时间
   let songTime = ref(0);
+  //当前音量
   let volume = ref(50);
+  //当前播放状态 0暂停/1播放
+  let playState = ref(0);
+  //当前播放模式 0列表循环/1单曲循环/2随机播放
+  let playbackMode = ref(0);
   const handleSelect = (key, keyPath) => {
     //console.log(key, keyPath);
   }
@@ -149,6 +160,39 @@
       play_bar.value.style.display = 'none';
       playBarIcon.value = ArrowUpBold;
     }
+  }
+  function playOrSuspend(){
+    if(playState.value === 0){
+      playState.value = 1;
+      play_bar_play.value.style.backgroundPosition = '-60px -60px';
+    }else {
+      playState.value = 0;
+      play_bar_play.value.style.backgroundPosition = '0 0';
+    }
+  }
+  function volumeAppear(){
+    volume_panel.value.style.display = 'block';
+  }
+  function volumeDisappear(){
+    volume_panel.value.style.display = 'none';
+  }
+  function playbackModePanelAppear(){
+    playback_mode_panel.value.style.display = 'block';
+  }
+  function selectPlayMode0(){
+    playbackMode.value = 0;
+    playback_mode_button.value.style.backgroundPosition = '-64px -179px';
+    playback_mode_panel.value.style.display = 'none';
+  }
+  function selectPlayMode1(){
+    playbackMode.value = 1;
+    playback_mode_button.value.style.backgroundPosition = '0 -179px';
+    playback_mode_panel.value.style.display = 'none';
+  }
+  function selectPlayMode2(){
+    playbackMode.value = 2;
+    playback_mode_button.value.style.backgroundPosition = '-128px -179px';
+    playback_mode_panel.value.style.display = 'none';
   }
 </script>
 
@@ -180,12 +224,18 @@
     margin-left: -7px;
     margin-top: 22px;
   }
+  .play_bar_prev:hover{
+    background-position: -36px -143px;
+  }
   .play_bar_play{
     width: 60px;
     height: 60px;
     position: absolute;
     margin-left: 43px;
     margin-top: 10px;
+  }
+  .play_bar_play:hover{
+    background-position: -60px 0;
   }
   .play_bar_next{
     width: 36px;
@@ -194,6 +244,32 @@
     position: absolute;
     margin-left: 117px;
     margin-top: 22px;
+  }
+  .play_bar_next:hover{
+    background-position: -180px -143px;
+  }
+  .volume_button{
+    width: 16px;
+    height: 16px;
+    background-position: -64px -195px;
+  }
+  .volume_button:hover{
+    background-position: -80px -195px;
+  }
+  .playback_mode_button{
+    background-position: -64px -179px;
+    width: 16px;
+    height: 16px;
+    line-height: 16px;
+  }
+  .playback_mode_button:hover{
+    background-position: -80px -179px;
+  }
+  .font_hover{
+    color: #f9f9f9;
+  }
+  .font_hover:hover{
+    color: #01a7fb;
   }
   .el-header{
     padding: 0;
