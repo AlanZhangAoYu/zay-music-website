@@ -22,6 +22,10 @@ const routes = [
         path: '/SingerView',
         component: () => import('../views/contents/singer')
       },
+      {
+        path: '/SingerDetail/:singerId',
+        component: () => import('../views/contents/singerDetails')
+      }
     ]
   }
 ];

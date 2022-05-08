@@ -22,16 +22,18 @@
       <div id="singerList" style="width: 70%;margin: 20px auto;">
         <div v-for="singer in singerList.singerList" style="float: left;width: 200px;margin: 20px;">
           <el-card :body-style="{ padding: '0px' }" shadow="hover">
-            <el-image :src="singer.singerImg" style="width: 200px;height: 200px;">
-              <template #error>
-                <div class="image-slot">
-                  <el-icon><icon-picture /></el-icon>
-                </div>
-              </template>
-            </el-image>
-            <div style="padding: 14px">
-              <span>{{singer.singerName}}</span>
-            </div>
+            <a href="javascript:void(0);" @click="gotoSingerDetail(singer.singerId)">
+              <el-image :src="singer.singerImg" style="width: 200px;height: 200px;">
+                <template #error>
+                  <div class="image-slot">
+                    <el-icon><icon-picture /></el-icon>
+                  </div>
+                </template>
+              </el-image>
+              <div style="padding: 14px">
+                <span style="color: #475669">{{singer.singerName}}</span>
+              </div>
+            </a>
           </el-card>
         </div>
       </div>
@@ -52,8 +54,10 @@
   import {ref ,reactive} from 'vue';
   import axios from 'axios';
   import api from '../../router/index';
+  import { useRouter } from 'vue-router';
   import { Picture as IconPicture } from '@element-plus/icons-vue';
   const singerList=reactive({singerList: []});
+  const router = useRouter();
   let currentPage = ref(1);
   let totalLength = reactive({total:''});
   selectAllSingerCount();
@@ -79,6 +83,11 @@
   function handleCurrentChange (val) {
     currentPage.value = val;
     selectAllSinger(currentPage.value);
+  }
+  function gotoSingerDetail(singerId){
+    router.push({
+      path: `/SingerDetail/${singerId}`
+    });
   }
 </script>
 
