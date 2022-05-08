@@ -8,6 +8,21 @@
     <select id="selectSingerByName" resultType="pojo.Singer" parameterType="String">
         select `singerId`,`singerName` from `singer_tab` where `singerName` = #{singerName}
     </select>
+    <select id="selectSingerByPara" resultType="pojo.Singer">
+        select `singerId`,`singerName`,`singerBirth`,`singerIntroduction`,`singerLocation`,`singerImgId`
+        from `singer_tab`
+        <where>
+            <if test="singerId != null and singerId != ''">
+                `singerId` = #{singerId}
+            </if>
+            <if test="singerName != null and singerName != ''">
+                `singerName` like concat(#{singerName},'%')
+            </if>
+            <if test="singerLocation != null and singerLocation != ''">
+                `singerLocation` = #{singerLocation}
+            </if>
+        </where>
+    </select>
     <select id="selectAllSingerCount" resultType="Integer">
         select count(`singerId`) from `singer_tab`
     </select>

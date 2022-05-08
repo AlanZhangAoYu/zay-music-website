@@ -29,4 +29,5 @@ public class GlobalConstant {
     public static final String SUCCESS = "success";
     public static final int FAIL = -0xffff;
     public static final String FAIL_STR = "failed";
+    public static final String NO_DATA = "No data found";
 }

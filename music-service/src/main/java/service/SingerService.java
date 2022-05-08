@@ -53,6 +53,9 @@ public class SingerService {
         }
         return singerId;
     }
+    public List<Singer> selectSingerByPara(Map<String,Object> map){
+        return singerMapper.selectSingerByPara(map);
+    }
     public int updateSingerInfo(HashMap<Object,Object> map){
         return singerMapper.updateSingerInfo(map);
     }

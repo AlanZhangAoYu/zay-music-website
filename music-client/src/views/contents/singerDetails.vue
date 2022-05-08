@@ -19,7 +19,8 @@
         clickMode="push">
     </vue-particles>
     <div id="main">
-      {{singerId}}
+      {{singerInfo.info.singerName}}
+      {{singerInfo.info.singerIntroduction}}
     </div>
   </div>
 </template>
@@ -28,9 +29,37 @@
   //注意Router与Route的区别!!!!
   //Router是发送 Route是接收
   import { useRoute } from 'vue-router';
-  import {ref} from 'vue';
+  import {ref,reactive} from 'vue';
+  import axios from 'axios';
+  import api from '../../router/index';
   const route = useRoute();
   const singerId=ref(route.params.singerId);
+  let singerInfo=reactive({info: {
+      singerId: '',
+      singerName: '',
+      singerBirth: '',
+      singerIntroduction: '',
+      singerLocation: '',
+      singerImg: ''
+    }});
+  selectSingerBySingerId(singerId.value);
+  function selectSingerBySingerId(singerId){
+    axios.get(api.baseUrl.baseUrl+'/selectSingerByPara',{params:{singerId: singerId,singerName: '',singerLocation: ''}}).then((response)=>{
+      singerInfo.info.singerId = response.data.singerId;
+      singerInfo.info.singerName = response.data.singerName;
+      singerInfo.info.singerBirth = dateFormat(response.data.singerBirth);
+      singerInfo.info.singerIntroduction = response.data.singerIntroduction;
+      singerInfo.info.singerLocation = response.data.singerLocation;
+      singerInfo.info.singerImg = api.baseUrl.baseUrl+'/previewFile/'+response.data.singerImgId;
+    });
+  }
+  function dateFormat(time){
+    let date = new Date(time);
+    let year = date.getFullYear();
+    let month = date.getMonth()+1;
+    let day = date.getDate();
+    return year + "-" + month + "-" + day;
+  }
 </script>
 
 <style scoped>

@@ -33,6 +33,22 @@ public class SingerController {
         map.put("AllSingerCount", singerService.selectAllSingerCount());
         return JSON.toJSONString(map);
     }
+    @GetMapping(value = "/selectSingerByPara")
+    public String selectSingerByParaController(@RequestParam("singerId")int singerId,
+                                               @RequestParam("singerName")String singerName,
+                                               @RequestParam("singerLocation")String singerLocation){
+        HashMap<String,Object> resultMap = new HashMap<>(1);
+        HashMap<String,Object> map=new HashMap<>(3);
+        map.put("singerId",singerId);
+        map.put("singerName",singerName);
+        map.put("singerLocation",singerLocation);
+        List<Singer> list = singerService.selectSingerByPara(map);
+        if(list.isEmpty()){
+            resultMap.put("msg",GlobalConstant.NO_DATA);
+            return JSON.toJSONString(resultMap);
+        }
+        return JSON.toJSONString(list.get(0));
+    }
     @PostMapping(value = "/updateSingerImg")
     @Transactional(rollbackFor = Exception.class)
     public String updateSingerImgController(@RequestParam("file") MultipartFile file,@RequestParam("singerId") int singerId){

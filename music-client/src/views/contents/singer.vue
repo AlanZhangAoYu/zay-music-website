@@ -21,7 +21,7 @@
     <div id="main" style="width: 100%;">
       <div id="singerList" style="width: 70%;margin: 20px auto;">
         <div v-for="singer in singerList.singerList" style="float: left;width: 200px;margin: 20px;">
-          <el-card :body-style="{ padding: '0px' }" shadow="hover">
+          <el-card class="card" :body-style="{ padding: '0px' }" shadow="hover">
             <a href="javascript:void(0);" @click="gotoSingerDetail(singer.singerId)">
               <el-image :src="singer.singerImg" style="width: 200px;height: 200px;">
                 <template #error>
@@ -98,6 +98,15 @@
 }
 #particles{
   background-color: #f9f9f9;
+}
+.card {
+  -webkit-transition: all 250ms cubic-bezier(0.02, 0.01, 0.47, 1);
+  transition: all 250ms cubic-bezier(.02, .01, .47, 1);
+}
+
+.card:hover {
+  transform: translate(0,-10px);
+  transition-delay: 0s !important;
 }
 .image-slot {
   display: flex;

@@ -38,6 +38,13 @@ public interface SingerMapper {
     List<Singer> selectSingerByName(String singerName);
 
     /**
+     * 根据传入的参数查询歌手信息
+     * @param map 传入的参数集合
+     * @return 返回结果
+     */
+    List<Singer> selectSingerByPara(Map<String,Object> map);
+
+    /**
      * 查询所有歌手的数量
      * @return 所有歌手的数量
      */
