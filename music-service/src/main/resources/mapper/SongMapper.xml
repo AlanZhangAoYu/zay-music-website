@@ -11,6 +11,30 @@
     <select id="selectAllSongCount" resultType="Integer">
         select count(`songId`) from `song_tab`
     </select>
+    <select id="selectSongByPara" resultMap="selectSongResultMap">
+        select song_tab.songId,song_tab.songName,song_tab.songLength,song_tab.fileId,
+               singer_tab.singerName,album_tab.albumName,song_type_tab.songTypeName,song_tab.createTime
+        from song_tab inner join album_tab on song_tab.albumId = album_tab.albumId
+                      inner join singer_tab on album_tab.singerId = singer_tab.singerId
+                      inner join song_type_tab on song_tab.songTypeId = song_type_tab.songTypeId
+        <where>
+            <if test="songId != null and songId != ''">
+                song_tab.songId = #{songId}
+            </if>
+            <if test="songName != null and songName != ''">
+                song_tab.songName like concat(#{songName},%)
+            </if>
+            <if test="singerId != null and singerId != ''">
+                singer_tab.singerId = #{singerId}
+            </if>
+            <if test="albumId != null and albumId != ''">
+                album_tab.albumId = #{albumId}
+            </if>
+            <if test="songTypeId != null and songTypeId != ''">
+                song_tab.songTypeId = #{songTypeId}
+            </if>
+        </where>
+    </select>
     <!--这里遇到问题, 参考文章: https://blog.csdn.net/m0_38138387/article/details/79314297-->
     <insert id="insertSong">
         insert into `song_tab`(`songName`,`singerId`,`albumId`,`songLength`,`songTypeId`,`createTime`,`fileId`)

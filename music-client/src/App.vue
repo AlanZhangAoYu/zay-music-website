@@ -9,6 +9,7 @@ body{
   padding: 0;
   overflow-x: hidden;
   overflow-y: scroll;
+  font-family: "Microsoft YaHei UI",sans-serif;
 }
 a{
   text-decoration: none;

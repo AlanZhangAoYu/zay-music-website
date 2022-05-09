@@ -34,6 +34,9 @@ public class SongService {
     public int selectAllSongCount(){
         return songMapper.selectAllSongCount();
     }
+    public List<Song> selectSongByPara(HashMap<String,Object> map){
+        return songMapper.selectSongByPara(map);
+    }
     public int insertSong(HashMap<String,String> songMap,int songTypeId,String fileId){
         String singerName= songMap.get("artist");
         String albumName= songMap.get("album");

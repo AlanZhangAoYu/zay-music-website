@@ -11,6 +11,7 @@ import pojo.MongoDbFile;
 import pojo.Song;
 import service.MongoDbFileService;
 import service.SongService;
+import util.GlobalConstant;
 import util.Mp3Util;
 import util.MultipartFileToFileUtil;
 import javax.annotation.Resource;
@@ -39,6 +40,34 @@ public class SongController {
         int result = songService.selectAllSongCount();
         map.put("AllSongCount",result);
         return JSON.toJSONString(map);
+    }
+    @GetMapping(value = "/selectSongByPara")
+    public String selectSongByPara(@RequestParam("songId")String songId,
+                                   @RequestParam("songName")String songName,
+                                   @RequestParam("singerId")String singerId,
+                                   @RequestParam("albumId")String albumId,
+                                   @RequestParam("songTypeId")String songTypeId){
+        HashMap<String,Object> resultMap=new HashMap<>(1);
+        HashMap<String,Object> map=new HashMap<>(5);
+        if(!songId.isEmpty()){
+            map.put("songId",Integer.valueOf(songId));
+        }
+        map.put("songName",songName);
+        if(!singerId.isEmpty()){
+            map.put("singerId",Integer.valueOf(singerId));
+        }
+        if(!albumId.isEmpty()){
+            map.put("albumId",Integer.valueOf(albumId));
+        }
+        if(!songTypeId.isEmpty()){
+            map.put("songTypeId",Integer.valueOf(songTypeId));
+        }
+        List<Song> list=songService.selectSongByPara(map);
+        if(list.isEmpty()){
+            resultMap.put("msg", GlobalConstant.NO_DATA);
+            return JSON.toJSONString(resultMap);
+        }
+        return JSON.toJSONString(list);
     }
     @PostMapping("/uploadSongFile")
     @Transactional(rollbackFor = Exception.class)

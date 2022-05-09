@@ -210,6 +210,7 @@
     width: 100%;
     position: fixed;
     bottom: 0;
+    z-index: 2000;
   }
   .play_bar_icon {
     display: block;
