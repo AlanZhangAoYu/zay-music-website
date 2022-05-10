@@ -13,6 +13,8 @@ app.use(ElementPlus);
 app.use(store);
 app.use(router.router);
 app.use(VueParticles);
+//设置全局播放列表
+app.provide('global',{'playList':[]});
 app.mount("#app");
 axios.interceptors.request.use(
     config => {

@@ -109,10 +109,10 @@
           </div>
           <div style="position: relative;top: -23px;left: 150px;">
             <!--播放列表按钮-->
-            <el-button :icon="Fold" @click="playList = true" style="height: 35px;width: 35px;" circle></el-button>
+            <el-button :icon="Fold" @click="playListVisible = true" style="height: 35px;width: 35px;" circle></el-button>
             <!--播放列表抽屉主窗口-->
             <el-drawer
-                v-model="playList"
+                v-model="playListVisible"
                 title="播放列表"
                 :direction="direction">
               <span>Hi, there!</span>
@@ -121,6 +121,9 @@
         </div>
       </div>
     </div>
+  </div>
+  <div style="display: none">
+    <audio id="MyAudio" :src="playUrl.value" :volume="volume.value" preload="none" ontimeupdate="onTimeUpdate"/>
   </div>
 </template>
 
@@ -131,6 +134,7 @@
   import {ArrowDownBold} from '@element-plus/icons-vue';
   import { Picture as IconPicture } from '@element-plus/icons-vue';
   import {Fold} from '@element-plus/icons-vue';
+  import { inject } from 'vue';
   const activeIndex = ref('1');
   const play_bar = ref(null);
   const play_bar_play = ref(null);
@@ -138,8 +142,16 @@
   const playback_mode_panel = ref(null);
   const playback_mode_button = ref(null);
   const direction = ref('rtl');
-  const playList = ref(false);
+  const playListVisible = ref(false);
+  //获取到的全局播放列表
+  let playList = inject('global').playList;
+  //获取到网页播放器
+  let musicAudio = document.getElementById('MyAudio');
+  //当前播放音频地址
+  let playUrl = ref('http://127.0.0.2:8081/previewFile/62593c5dec5fae153516d185');
+  //当前播放歌曲名
   let songName = ref('暂无歌曲');
+  //当前显示还是隐藏播放栏
   let playBarIcon = ref(ArrowUpBold);
   //当前歌曲时间
   let songTime = ref(0);
@@ -162,13 +174,22 @@
     }
   }
   function playOrSuspend(){
+    //当前音频播放或暂停时的动作
     if(playState.value === 0){
+      //暂停时
+      musicAudio.play();
       playState.value = 1;
       play_bar_play.value.style.backgroundPosition = '-60px -60px';
     }else {
+      //播放时
+      musicAudio.pause();
       playState.value = 0;
       play_bar_play.value.style.backgroundPosition = '0 0';
     }
+  }
+  function onTimeUpdate(){
+    //播放栏进度条更新
+
   }
   function volumeAppear(){
     volume_panel.value.style.display = 'block';

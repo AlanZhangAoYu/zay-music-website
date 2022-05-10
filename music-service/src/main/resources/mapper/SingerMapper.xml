@@ -13,13 +13,13 @@
         from `singer_tab`
         <where>
             <if test="singerId != null and singerId != ''">
-                `singerId` = #{singerId}
+                and `singerId` = #{singerId}
             </if>
             <if test="singerName != null and singerName != ''">
-                `singerName` like concat(#{singerName},'%')
+                and `singerName` like concat(#{singerName},'%')
             </if>
             <if test="singerLocation != null and singerLocation != ''">
-                `singerLocation` = #{singerLocation}
+                and `singerLocation` = #{singerLocation}
             </if>
         </where>
     </select>

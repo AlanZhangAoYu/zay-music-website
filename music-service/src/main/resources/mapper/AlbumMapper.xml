@@ -13,6 +13,23 @@
     <select id="selectAllAlbumCount" resultType="Integer">
         select count(`albumId`) from `album_tab`
     </select>
+    <select id="selectAlbumByPara" resultMap="selectAlbumMap">
+        select `albumId`,`albumName`,`singerId`,`year`,`albumImgId` from `album_tab`
+        <where>
+            <if test="albumId != null and albumId != ''">
+                and `albumId` = #{albumId}
+            </if>
+            <if test="albumName != null and albumName != ''">
+                and `albumName` like concat(#{albumName},'%')
+            </if>
+            <if test="singerId != null and singerId != ''">
+                and `singerId` = #{singerId}
+            </if>
+            <if test="year != null and year != ''">
+                and `year` = #{year}
+            </if>
+        </where>
+    </select>
     <insert id="insertAlbum">
         insert into `album_tab`(`albumName`,`singerId`,`year`,`albumImgId`)
         values (#{albumName},#{singerId},#{year},#{albumImgId})

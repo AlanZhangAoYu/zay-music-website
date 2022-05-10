@@ -19,19 +19,19 @@
                       inner join song_type_tab on song_tab.songTypeId = song_type_tab.songTypeId
         <where>
             <if test="songId != null and songId != ''">
-                song_tab.songId = #{songId}
+                and song_tab.songId = #{songId}
             </if>
             <if test="songName != null and songName != ''">
-                song_tab.songName like concat(#{songName},%)
+                and song_tab.songName like concat(#{songName},'%')
             </if>
             <if test="singerId != null and singerId != ''">
-                singer_tab.singerId = #{singerId}
+                and singer_tab.singerId = #{singerId}
             </if>
             <if test="albumId != null and albumId != ''">
-                album_tab.albumId = #{albumId}
+                and album_tab.albumId = #{albumId}
             </if>
             <if test="songTypeId != null and songTypeId != ''">
-                song_tab.songTypeId = #{songTypeId}
+                and song_tab.songTypeId = #{songTypeId}
             </if>
         </where>
     </select>
