@@ -163,6 +163,7 @@
 .row{
   height: 30px;
   padding: 10px;
+  border: 2px solid rgba(230,234,239,0.36);
 }
 .row:hover{
   border: 2px solid rgba(0, 0, 0, 0.36);

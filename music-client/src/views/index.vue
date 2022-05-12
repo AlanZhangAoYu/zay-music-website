@@ -58,12 +58,12 @@
             <div style="float: left;width: 290px;height: 24px;overflow: hidden;"><span style="color: #f9f9f9;font-size: 13px">{{songName}}</span></div>
             <!--歌曲长度-->
             <div style="float: right;height: 24px;">
-              <span style="color: #f9f9f9;font-size: 13px">00:00/00:00</span>
+              <span style="color: #f9f9f9;font-size: 13px">{{songTime}}/{{totalTime}}</span>
             </div>
           </div>
           <!--播放条中间下半部分: 进度条-->
           <div style="margin-top: 11px;height: 5px;">
-            <el-slider v-model="songTime" style="height: 0"/>
+            <el-slider ref="process_line" v-model="songTime" style="height: 0"/>
           </div>
         </div>
         <div style="position: absolute;left: 710px;width: 260px;height: 80px;">
@@ -122,13 +122,10 @@
       </div>
     </div>
   </div>
-  <div style="display: none">
-    <audio id="MyAudio" :src="playUrl.value" :volume="volume.value" preload="none" ontimeupdate="onTimeUpdate"/>
-  </div>
 </template>
 
 <script setup>
-  import {ref} from 'vue';
+  import {onMounted,ref} from 'vue';
   import {Avatar} from '@element-plus/icons-vue';
   import {ArrowUpBold} from '@element-plus/icons-vue';
   import {ArrowDownBold} from '@element-plus/icons-vue';
@@ -141,19 +138,20 @@
   const volume_panel = ref(null);
   const playback_mode_panel = ref(null);
   const playback_mode_button = ref(null);
+  const process_line = ref(null);
   const direction = ref('rtl');
   const playListVisible = ref(false);
+  //创建一个网页播放器
+  let myAudio= new Audio();
   //获取到的全局播放列表
   let playList = inject('global').playList;
-  //获取到网页播放器
-  let musicAudio = document.getElementById('MyAudio');
   //当前播放音频地址
   let playUrl = ref('http://127.0.0.2:8081/previewFile/62593c5dec5fae153516d185');
   //当前播放歌曲名
   let songName = ref('暂无歌曲');
   //当前显示还是隐藏播放栏
   let playBarIcon = ref(ArrowUpBold);
-  //当前歌曲时间
+  //当前播放到的歌曲时间
   let songTime = ref(0);
   //当前音量
   let volume = ref(50);
@@ -161,6 +159,8 @@
   let playState = ref(0);
   //当前播放模式 0列表循环/1单曲循环/2随机播放
   let playbackMode = ref(0);
+  //当前播放歌曲总时长
+  let totalTime = ref(0);
   const handleSelect = (key, keyPath) => {
     //console.log(key, keyPath);
   }
@@ -177,12 +177,29 @@
     //当前音频播放或暂停时的动作
     if(playState.value === 0){
       //暂停时
-      musicAudio.play();
+      myAudio.src=playUrl.value;
+      myAudio.volume = volume.value/100;
+      //防止myAudio.duration为NaN
+      myAudio.load();
+      myAudio.oncanplay = function () {totalTime.value = myAudio.duration;}
+      let playPromise = myAudio.play();
+      songTime.value = myAudio.currentTime;
+      process_line.value.max = totalTime.value;
+      if (playPromise !== undefined) {
+        playPromise.then(() => {
+          setTimeout(()=>{
+            console.log('done');
+          },myAudio.duration*1000);
+        }).catch((error)=> {
+          console.log(error);
+        })
+      }
       playState.value = 1;
       play_bar_play.value.style.backgroundPosition = '-60px -60px';
     }else {
       //播放时
-      musicAudio.pause();
+      myAudio.pause();
+      myAudio.currentTime = songTime.value;
       playState.value = 0;
       play_bar_play.value.style.backgroundPosition = '0 0';
     }
