@@ -58,12 +58,14 @@
             <div style="float: left;width: 290px;height: 24px;overflow: hidden;"><span style="color: #f9f9f9;font-size: 13px">{{songName}}</span></div>
             <!--歌曲长度-->
             <div style="float: right;height: 24px;">
-              <span style="color: #f9f9f9;font-size: 13px">{{songTime}}/{{totalTime}}</span>
+              <span style="color: #f9f9f9;font-size: 13px">
+                {{util.formatSongTime(songTime)}}/{{util.formatSongTime(totalTime)}}
+              </span>
             </div>
           </div>
           <!--播放条中间下半部分: 进度条-->
           <div style="margin-top: 11px;height: 5px;">
-            <el-slider ref="process_line" v-model="songTime" style="height: 0"/>
+            <el-slider :max="totalTime" v-model="songTime" style="height: 0"/>
           </div>
         </div>
         <div style="position: absolute;left: 710px;width: 260px;height: 80px;">
@@ -122,10 +124,11 @@
       </div>
     </div>
   </div>
+  <div style="display: none"><audio ref="myAudio" preload="auto" :src="playUrl"></audio></div>
 </template>
 
 <script setup>
-  import {onMounted,ref} from 'vue';
+  import {ref,watch} from 'vue';
   import {Avatar} from '@element-plus/icons-vue';
   import {ArrowUpBold} from '@element-plus/icons-vue';
   import {ArrowDownBold} from '@element-plus/icons-vue';
@@ -139,11 +142,10 @@
   const volume_panel = ref(null);
   const playback_mode_panel = ref(null);
   const playback_mode_button = ref(null);
-  const process_line = ref(null);
   const direction = ref('rtl');
   const playListVisible = ref(false);
   //创建一个网页播放器
-  let myAudio= new Audio();
+  const myAudio= ref(null);
   //获取到的全局播放列表
   let playList = inject('global').playList;
   //当前播放音频地址
@@ -162,6 +164,7 @@
   let playbackMode = ref(0);
   //当前播放歌曲总时长
   let totalTime = ref(0);
+
   const handleSelect = (key, keyPath) => {
     //console.log(key, keyPath);
   }
@@ -178,36 +181,43 @@
     //当前音频播放或暂停时的动作
     if(playState.value === 0){
       //暂停时
-      myAudio.src=playUrl.value;
-      myAudio.volume = volume.value/100;
-      //防止myAudio.duration为NaN
-      myAudio.load();
-      myAudio.oncanplay = function () {totalTime.value = util.formatSongTime(myAudio.duration);}
-      let playPromise = myAudio.play();
-      //这里要调用监听函数，只要myAudio在播放，就要更新进度条与当前时间
-      if (playPromise !== undefined) {
-        playPromise.then(() => {
-          setTimeout(()=>{
-            console.log('done');
-          },myAudio.duration*1000);
-        }).catch((error)=> {
-          console.log(error);
-        })
-      }
+      Play();
       playState.value = 1;
       play_bar_play.value.style.backgroundPosition = '-60px -60px';
     }else {
       //播放时
-      myAudio.pause();
-      myAudio.currentTime = songTime.value;
+      Suspend();
       playState.value = 0;
       play_bar_play.value.style.backgroundPosition = '0 0';
     }
   }
-  function onTimeUpdate(){
-    //播放栏进度条更新
-
+  function Play(){
+    //当播放音频时要执行的函数
+    let playPromise = myAudio.value.play();
+    if (playPromise !== undefined) {
+      //防止myAudio.duration为NaN
+      playPromise.then(() => {
+        setTimeout(()=>{
+          totalTime.value = myAudio.value.duration;
+        },myAudio.value.duration);
+      }).catch((error)=> {
+        console.log(error);
+      })
+      //添加监听器监听播放器的改变并实时更新进度条和当前时间
+      myAudio.value.addEventListener('timeupdate',function (){
+        songTime.value = myAudio.value.currentTime;
+      });
+    }
   }
+  function Suspend(){
+    //当音频暂停时要执行的函数
+    songTime.value = myAudio.value.currentTime;
+    myAudio.value.pause();
+  }
+  //监听函数，监听音量滑动条的改变来动态设置音量大小
+  watch(volume,()=>{
+    myAudio.value.volume = volume.value/100;
+  });
   function volumeAppear(){
     volume_panel.value.style.display = 'block';
   }

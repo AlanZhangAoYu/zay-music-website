@@ -37,9 +37,8 @@ export default {
     second += arr[arr.length - 1] * 1;
     return second;
   },
-  // 歌曲毫秒格式化处理 03:30
+  // 歌曲秒格式化处理 03:30
   formatSongTime (duration) {
-    duration = duration >= 0 ? duration / 1000 : 0;
     const m = (Math.floor(duration / 60) + '').padStart(2, '0');
     const s = (Math.floor(duration % 60) + '').padStart(2, '0');
     return `${m}:${s}`;
@@ -83,5 +82,14 @@ export default {
       }
     })
     return ret
-  }
+  },
+  sleep(numberMillis) {
+    let now = new Date();
+    let exitTime = now.getTime() + numberMillis;
+    while (true) {
+      now = new Date();
+      if (now.getTime() > exitTime)
+        return;
+    }
+}
 }
