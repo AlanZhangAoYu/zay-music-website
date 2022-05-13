@@ -129,6 +129,7 @@
   import {Avatar} from '@element-plus/icons-vue';
   import {ArrowUpBold} from '@element-plus/icons-vue';
   import {ArrowDownBold} from '@element-plus/icons-vue';
+  import util from '../util/util';
   import { Picture as IconPicture } from '@element-plus/icons-vue';
   import {Fold} from '@element-plus/icons-vue';
   import { inject } from 'vue';
@@ -181,10 +182,9 @@
       myAudio.volume = volume.value/100;
       //防止myAudio.duration为NaN
       myAudio.load();
-      myAudio.oncanplay = function () {totalTime.value = myAudio.duration;}
+      myAudio.oncanplay = function () {totalTime.value = util.formatSongTime(myAudio.duration);}
       let playPromise = myAudio.play();
-      songTime.value = myAudio.currentTime;
-      process_line.value.max = totalTime.value;
+      //这里要调用监听函数，只要myAudio在播放，就要更新进度条与当前时间
       if (playPromise !== undefined) {
         playPromise.then(() => {
           setTimeout(()=>{

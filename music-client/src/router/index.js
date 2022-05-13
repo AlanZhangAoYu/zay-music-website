@@ -4,27 +4,27 @@ const routes = [
   {
     path: '/',
     name: 'index',
-    component: () => import('../views/index.vue'),
+    component: () => import('../views/Index.vue'),
     children: [
       {
         path: '/AlbumView',
-        component: () => import('../views/contents/album')
+        component: () => import('../views/contents/Album')
       },
       {
         path: '/ListView',
-        component: () => import('../views/contents/list')
+        component: () => import('../views/contents/List')
       },
       {
         path: '/MainView',
-        component: () => import('../views/contents/main')
+        component: () => import('../views/contents/Main')
       },
       {
         path: '/SingerView',
-        component: () => import('../views/contents/singer')
+        component: () => import('../views/contents/Singer')
       },
       {
         path: '/SingerDetail/:singerId',
-        component: () => import('../views/contents/singerDetails')
+        component: () => import('../views/contents/SingerDetails')
       }
     ]
   }

@@ -80,6 +80,7 @@
   import {ref,reactive} from 'vue';
   import axios from 'axios';
   import api from '../../router/index';
+  import util from '../../util/util';
   import { Picture as IconPicture } from '@element-plus/icons-vue';
   import { Back } from '@element-plus/icons-vue';
   import { Headset } from '@element-plus/icons-vue';
@@ -104,7 +105,7 @@
     axios.get(api.baseUrl.baseUrl+'/selectSingerByPara',{params:{singerId: singerId,singerName: '',singerLocation: ''}}).then((response)=>{
       singerInfo.info.singerId = response.data.singerId;
       singerInfo.info.singerName = response.data.singerName;
-      singerInfo.info.singerBirth = dateFormat(response.data.singerBirth);
+      singerInfo.info.singerBirth = util.dateFormat(response.data.singerBirth);
       singerInfo.info.singerIntroduction = response.data.singerIntroduction;
       singerInfo.info.singerLocation = response.data.singerLocation;
       singerInfo.info.singerImg = api.baseUrl.baseUrl+'/previewFile/'+response.data.singerImgId;
@@ -123,13 +124,6 @@
             });
           }
         });
-  }
-  function dateFormat(time){
-    let date = new Date(time);
-    let year = date.getFullYear();
-    let month = date.getMonth()+1;
-    let day = date.getDate();
-    return year + "-" + month + "-" + day;
   }
   function backToSingerView(){
     router.push({
