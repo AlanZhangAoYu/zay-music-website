@@ -42,7 +42,7 @@
         <div style="position: absolute;left: 190px;width: 60px;height: 60px;">
           <!--播放条中间部分: 专辑封面 -->
           <a>
-            <el-image style="height: 60px;width: 60px;margin-top: 10px">
+            <el-image :src="albumImgUrl" style="height: 60px;width: 60px;margin-top: 10px">
               <template #error>
                 <div class="image-slot">
                   <el-icon color="#f8f8f8"><icon-picture /></el-icon>
@@ -124,11 +124,11 @@
       </div>
     </div>
   </div>
-  <div style="display: none"><audio ref="myAudio" preload="auto" :src="playUrl"></audio></div>
+  <div style="display: none"><audio ref="myAudio" :src="playUrl"></audio></div>
 </template>
 
 <script setup>
-  import {ref,watch} from 'vue';
+  import {computed,ref,watch} from 'vue';
   import {Avatar} from '@element-plus/icons-vue';
   import {ArrowUpBold} from '@element-plus/icons-vue';
   import {ArrowDownBold} from '@element-plus/icons-vue';
@@ -148,8 +148,18 @@
   const myAudio= ref(null);
   //获取到的全局播放列表
   let playList = inject('global').playList;
+  playList.push({
+      songName: '追光者-(电视剧《夏至未至》插曲)',
+      songPlayUrl: 'http://127.0.0.2:8081/previewFile/62593c5dec5fae153516d185',
+      albumImgUrl: 'http://127.0.0.2:8081/previewFile/6266359c0ceed4551d368593'
+    });
+  playList.push({
+    songName: '最初的梦想',
+    songPlayUrl: 'http://127.0.0.2:8081/previewFile/62593c43ec5fae153516d174',
+    albumImgUrl: 'http://127.0.0.2:8081/previewFile/6266351e0ceed4551d368590',
+  });
   //当前播放音频地址
-  let playUrl = ref('http://127.0.0.2:8081/previewFile/62593c5dec5fae153516d185');
+  let playUrl = ref('');
   //当前播放歌曲名
   let songName = ref('暂无歌曲');
   //当前显示还是隐藏播放栏
@@ -164,7 +174,7 @@
   let playbackMode = ref(0);
   //当前播放歌曲总时长
   let totalTime = ref(0);
-
+  let albumImgUrl = ref('');
   const handleSelect = (key, keyPath) => {
     //console.log(key, keyPath);
   }
@@ -181,18 +191,21 @@
     //当前音频播放或暂停时的动作
     if(playState.value === 0){
       //暂停时
-      Play();
-      playState.value = 1;
-      play_bar_play.value.style.backgroundPosition = '-60px -60px';
+      Play(1);
     }else {
       //播放时
       Suspend();
-      playState.value = 0;
-      play_bar_play.value.style.backgroundPosition = '0 0';
     }
   }
-  function Play(){
-    //当播放音频时要执行的函数
+  function Play(index){
+    //当播放音频时要执行的函数(index为要播放播放列表的哪一项的索引)
+    //获取当前要播放的歌曲信息
+    const curSongInfo = playList[index];
+    songName.value = curSongInfo.songName;
+    albumImgUrl.value = curSongInfo.albumImgUrl;
+    playUrl.value = curSongInfo.songPlayUrl;
+    playState.value = 1;
+    play_bar_play.value.style.backgroundPosition = '-60px -60px';
     let playPromise = myAudio.value.play();
     if (playPromise !== undefined) {
       //防止myAudio.duration为NaN
@@ -200,9 +213,10 @@
         setTimeout(()=>{
           totalTime.value = myAudio.value.duration;
         },myAudio.value.duration);
-      }).catch((error)=> {
+      }).catch((error)=>{
+        console.log(playUrl.value);
         console.log(error);
-      })
+      });
       //添加监听器监听播放器的改变并实时更新进度条和当前时间
       myAudio.value.addEventListener('timeupdate',function (){
         songTime.value = myAudio.value.currentTime;
@@ -213,6 +227,8 @@
     //当音频暂停时要执行的函数
     songTime.value = myAudio.value.currentTime;
     myAudio.value.pause();
+    playState.value = 0;
+    play_bar_play.value.style.backgroundPosition = '0 0';
   }
   //监听函数，监听音量滑动条的改变来动态设置音量大小
   watch(volume,()=>{
