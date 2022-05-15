@@ -60,9 +60,9 @@
                 <el-col :span="5"><div>{{ song.albumName }}</div></el-col>
                 <el-col :span="5"><div>{{ song.songType }}</div></el-col>
                 <el-col :span="2"><div>{{ song.songLength }}</div></el-col>
-                <el-col :span="1"><div><el-button color="#94defc" :icon="Headset" circle /></div></el-col>
-                <el-col :span="1"><div><el-button color="#94defc" :icon="Plus" circle /></div></el-col>
-                <el-col :span="1"><div><el-button color="#94defc" :icon="Download" circle /></div></el-col>
+                <el-col :span="1"><div><el-button color="#94defc" :icon="Headset" circle @click=""/></div></el-col>
+                <el-col :span="1"><div><el-button color="#94defc" :icon="Plus" circle @click="addSongToPlayList(song)"/></div></el-col>
+                <el-col :span="1"><div><el-button color="#94defc" :icon="Download" circle @click=""/></div></el-col>
               </el-row>
             </div>
           </el-scrollbar>
@@ -77,10 +77,11 @@
   //注意Router与Route的区别!!!!
   //Router是发送 Route是接收
   import { useRoute,useRouter } from 'vue-router';
-  import {ref,reactive} from 'vue';
+  import {ref,reactive,inject} from 'vue';
   import axios from 'axios';
   import api from '../../router/index';
   import util from '../../util/util';
+  import { ElMessage } from 'element-plus';
   import { Picture as IconPicture } from '@element-plus/icons-vue';
   import { Back } from '@element-plus/icons-vue';
   import { Headset } from '@element-plus/icons-vue';
@@ -89,7 +90,9 @@
   const route = useRoute();
   const router = useRouter();
   const singerId=ref(route.params.singerId);
-  const activeName = ref('first')
+  const activeName = ref('first');
+  //获取全局的播放列表
+  let playList = inject('global').playList;
   let singerInfo=reactive({info: {
       singerId: '',
       singerName: '',
@@ -121,9 +124,24 @@
               albumName: response.data[i].album.albumName,
               songType: response.data[i].songType.songTypeName,
               songLength: response.data[i].songLength,
+              songPlayUrl: api.baseUrl.baseUrl+'/previewFile/'+response.data[i].fileId,
+              albumImgUrl: api.baseUrl.baseUrl+'/previewFile/'+response.data[i].album.albumImgId
             });
           }
         });
+  }
+  function addSongToPlayList(song){
+    playList.push({
+      songName: song.songName,
+      songLength: song.songLength,
+      singerName: singerInfo.info.singerName,
+      songPlayUrl: song.songPlayUrl,
+      albumImgUrl: song.albumImgUrl
+    });
+    ElMessage({
+      message: '添加成功',
+      type: 'success',
+    })
   }
   function backToSingerView(){
     router.push({

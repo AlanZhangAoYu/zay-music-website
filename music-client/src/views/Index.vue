@@ -36,7 +36,7 @@
         <div style="position: absolute;width: 160px;height: 80px;">
           <!--播放条左部分: 上一首 播放/暂停 下一首-->
           <a class="play_bar_icon play_bar_prev"></a>
-          <a class="play_bar_icon play_bar_play" @click="playOrSuspend" ref="play_bar_play"></a>
+          <a class="play_bar_icon play_bar_play" @click="playOrSuspend(playListIndex)" ref="play_bar_play"></a>
           <a class="play_bar_icon play_bar_next"></a>
         </div>
         <div style="position: absolute;left: 190px;width: 60px;height: 60px;">
@@ -117,7 +117,16 @@
                 v-model="playListVisible"
                 title="播放列表"
                 :direction="direction">
-              <span>Hi, there!</span>
+              <el-scrollbar height="600px">
+                <el-row v-for="(item,index) in playList" :key="item" class="play_list_item">
+                  <el-col :span="8">{{item.songName}}</el-col>
+                  <el-col :span="6">{{item.singerName}}</el-col>
+                  <el-col :span="4">{{item.songLength}}</el-col>
+                  <el-col :span="2"><el-button color="#94defc" :icon="Headset" circle @click="Play(index)"/></el-col>
+                  <el-col :span="2"><el-button color="#94defc" :icon="Download" circle @click=""/></el-col>
+                  <el-col :span="2"><el-button color="#94defc" :icon="Delete" circle @click="deleteSongFromPlayList(index)"/></el-col>
+                </el-row>
+              </el-scrollbar>
             </el-drawer>
           </div>
         </div>
@@ -135,6 +144,9 @@
   import util from '../util/util';
   import { Picture as IconPicture } from '@element-plus/icons-vue';
   import {Fold} from '@element-plus/icons-vue';
+  import { Headset } from '@element-plus/icons-vue';
+  import { Delete } from '@element-plus/icons-vue';
+  import { Download } from '@element-plus/icons-vue';
   import { inject } from 'vue';
   const activeIndex = ref('1');
   const play_bar = ref(null);
@@ -148,18 +160,10 @@
   const myAudio= ref(null);
   //获取到的全局播放列表
   let playList = inject('global').playList;
-  playList.push({
-      songName: '追光者-(电视剧《夏至未至》插曲)',
-      songPlayUrl: 'http://127.0.0.2:8081/previewFile/62593c5dec5fae153516d185',
-      albumImgUrl: 'http://127.0.0.2:8081/previewFile/6266359c0ceed4551d368593'
-    });
-  playList.push({
-    songName: '最初的梦想',
-    songPlayUrl: 'http://127.0.0.2:8081/previewFile/62593c43ec5fae153516d174',
-    albumImgUrl: 'http://127.0.0.2:8081/previewFile/6266351e0ceed4551d368590',
-  });
   //当前播放音频地址
   let playUrl = ref('');
+  //当前播放的项目在播放列表的索引
+  let playListIndex = ref(0);
   //当前播放歌曲名
   let songName = ref('暂无歌曲');
   //当前显示还是隐藏播放栏
@@ -187,11 +191,11 @@
       playBarIcon.value = ArrowUpBold;
     }
   }
-  function playOrSuspend(){
+  function playOrSuspend(index){
     //当前音频播放或暂停时的动作
     if(playState.value === 0){
       //暂停时
-      Play(1);
+      Play(index);
     }else {
       //播放时
       Suspend();
@@ -201,6 +205,7 @@
     //当播放音频时要执行的函数(index为要播放播放列表的哪一项的索引)
     //获取当前要播放的歌曲信息
     const curSongInfo = playList[index];
+    playListIndex.value = index;
     songName.value = curSongInfo.songName;
     albumImgUrl.value = curSongInfo.albumImgUrl;
     playUrl.value = curSongInfo.songPlayUrl;
@@ -234,6 +239,10 @@
   watch(volume,()=>{
     myAudio.value.volume = volume.value/100;
   });
+  //从播放列表中删除项目
+  function deleteSongFromPlayList(index){
+    playList.splice(index,1);
+  }
   function volumeAppear(){
     volume_panel.value.style.display = 'block';
   }
@@ -329,6 +338,15 @@
   }
   .playback_mode_button:hover{
     background-position: -80px -179px;
+  }
+  .play_list_item{
+    height: 50px;
+    margin: 2px;
+    padding: 5px;
+    border: 2px solid #ffffff;
+  }
+  .play_list_item:hover{
+    border: 2px solid #545c64;
   }
   .font_hover{
     color: #f9f9f9;

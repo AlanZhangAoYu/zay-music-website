@@ -2,8 +2,9 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="mapper.SongMapper">
     <select id="selectAllSong" resultMap="selectSongResultMap">
-        select song_tab.songId,song_tab.songName,song_tab.songLength,song_tab.fileId,
-            singer_tab.singerName,album_tab.albumName,song_type_tab.songTypeName,song_tab.createTime
+        select song_tab.songId,song_tab.songName,song_tab.songLength,song_tab.fileId,singer_tab.singerId,
+               singer_tab.singerName,singer_tab.singerImgId,album_tab.albumId,album_tab.albumName,
+               album_tab.albumImgId,song_type_tab.songTypeName,song_tab.createTime
         from song_tab inner join album_tab on song_tab.albumId = album_tab.albumId
             inner join singer_tab on album_tab.singerId = singer_tab.singerId
             inner join song_type_tab on song_tab.songTypeId = song_type_tab.songTypeId
@@ -12,8 +13,9 @@
         select count(`songId`) from `song_tab`
     </select>
     <select id="selectSongByPara" resultMap="selectSongResultMap">
-        select song_tab.songId,song_tab.songName,song_tab.songLength,song_tab.fileId,
-               singer_tab.singerName,album_tab.albumName,song_type_tab.songTypeName,song_tab.createTime
+        select song_tab.songId,song_tab.songName,song_tab.songLength,song_tab.fileId,singer_tab.singerId,
+               singer_tab.singerName,singer_tab.singerImgId,album_tab.albumId,album_tab.albumName,
+               album_tab.albumImgId,song_type_tab.songTypeName,song_tab.createTime
         from song_tab inner join album_tab on song_tab.albumId = album_tab.albumId
                       inner join singer_tab on album_tab.singerId = singer_tab.singerId
                       inner join song_type_tab on song_tab.songTypeId = song_type_tab.songTypeId
@@ -49,10 +51,12 @@
         <association property="singer" javaType="pojo.Singer">
             <id property="singerId" column="singerId"/>
             <result property="singerName" column="singerName"/>
+            <result property="singerImgId" column="singerImgId"/>
         </association>
         <association property="album" javaType="pojo.Album">
             <id property="albumId" column="albumId"/>
             <result property="albumName" column="albumName"/>
+            <result property="albumImgId" column="albumImgId"/>
         </association>
         <association property="songType" javaType="pojo.SongType">
             <id property="songTypeId" column="songTypeId"/>
