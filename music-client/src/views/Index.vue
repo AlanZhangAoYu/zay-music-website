@@ -35,9 +35,9 @@
       <div style="position: relative;margin: 0 auto;width: 960px;height: 80px;">
         <div style="position: absolute;width: 160px;height: 80px;">
           <!--播放条左部分: 上一首 播放/暂停 下一首-->
-          <a class="play_bar_icon play_bar_prev"></a>
+          <a class="play_bar_icon play_bar_prev" @click="lastMusic(playListIndex)"></a>
           <a class="play_bar_icon play_bar_play" @click="playOrSuspend(playListIndex)" ref="play_bar_play"></a>
-          <a class="play_bar_icon play_bar_next"></a>
+          <a class="play_bar_icon play_bar_next" @click="nextMusic(playListIndex)"></a>
         </div>
         <div style="position: absolute;left: 190px;width: 60px;height: 60px;">
           <!--播放条中间部分: 专辑封面 -->
@@ -65,7 +65,7 @@
           </div>
           <!--播放条中间下半部分: 进度条-->
           <div style="margin-top: 11px;height: 5px;">
-            <el-slider :max="totalTime" v-model="songTime" style="height: 0"/>
+            <el-slider :max="totalTime" v-model="songTime" style="height: 0" @click="clickSlider"/>
           </div>
         </div>
         <div style="position: absolute;left: 710px;width: 260px;height: 80px;">
@@ -117,16 +117,18 @@
                 v-model="playListVisible"
                 title="播放列表"
                 :direction="direction">
-              <el-scrollbar height="600px">
-                <el-row v-for="(item,index) in playList" :key="item" class="play_list_item">
-                  <el-col :span="8">{{item.songName}}</el-col>
-                  <el-col :span="6">{{item.singerName}}</el-col>
-                  <el-col :span="4">{{item.songLength}}</el-col>
-                  <el-col :span="2"><el-button color="#94defc" :icon="Headset" circle @click="Play(index)"/></el-col>
-                  <el-col :span="2"><el-button color="#94defc" :icon="Download" circle @click=""/></el-col>
-                  <el-col :span="2"><el-button color="#94defc" :icon="Delete" circle @click="deleteSongFromPlayList(index)"/></el-col>
-                </el-row>
-              </el-scrollbar>
+              <el-table :data="playList" :key="itemKey" stripe style="width: 100%">
+                <el-table-column prop="songName" label="歌曲名" />
+                <el-table-column prop="singerName" label="歌手" width="110"/>
+                <el-table-column prop="songLength" label="时长" width="60"/>
+                <el-table-column label="操作">
+                  <template #default="scope">
+                    <el-button color="#94defc" :icon="Headset" circle @click="Play(scope.$index)" size="small"/>
+                    <el-button color="#94defc" :icon="Download" circle @click="" size="small"/>
+                    <el-button color="#94defc" :icon="Delete" circle @click="deleteSongFromPlayList(scope.$index)" size="small"/>
+                  </template>
+                </el-table-column>
+              </el-table>
             </el-drawer>
           </div>
         </div>
@@ -137,10 +139,11 @@
 </template>
 
 <script setup>
-  import {computed,ref,watch} from 'vue';
+  import {ref,watch,reactive} from 'vue';
   import {Avatar} from '@element-plus/icons-vue';
   import {ArrowUpBold} from '@element-plus/icons-vue';
   import {ArrowDownBold} from '@element-plus/icons-vue';
+  import { ElMessage } from 'element-plus';
   import util from '../util/util';
   import { Picture as IconPicture } from '@element-plus/icons-vue';
   import {Fold} from '@element-plus/icons-vue';
@@ -179,6 +182,7 @@
   //当前播放歌曲总时长
   let totalTime = ref(0);
   let albumImgUrl = ref('');
+  let itemKey = ref(Math.random());
   const handleSelect = (key, keyPath) => {
     //console.log(key, keyPath);
   }
@@ -226,6 +230,14 @@
       myAudio.value.addEventListener('timeupdate',function (){
         songTime.value = myAudio.value.currentTime;
       });
+      //添加监听器监听播放结束时的播放模式并作出相应改变
+      myAudio.value.addEventListener('ended',()=>{
+        if(playbackMode.value === 0){
+          Play((index+1)%playList.length);
+        }else if(playbackMode.value === 1){
+          Play(index);
+        }
+      })
     }
   }
   function Suspend(){
@@ -242,6 +254,26 @@
   //从播放列表中删除项目
   function deleteSongFromPlayList(index){
     playList.splice(index,1);
+    itemKey.value = Math.random();
+    ElMessage({
+      message: '移除成功',
+      type: 'success',
+    })
+  }
+  //播放当前index的上一首歌曲
+  function lastMusic(index){
+    if(index-1 < 0){
+      Play(playList.length - 1);
+    }else{
+      Play(index - 1);
+    }
+  }
+  //播放当前index的下一首歌曲
+  function nextMusic(index){
+    Play((index+1)%playList.length);
+  }
+  function clickSlider(){
+    myAudio.value.currentTime = songTime.value;
   }
   function volumeAppear(){
     volume_panel.value.style.display = 'block';

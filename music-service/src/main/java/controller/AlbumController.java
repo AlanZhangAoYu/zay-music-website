@@ -35,9 +35,10 @@ public class AlbumController {
     }
     @PostMapping(value = "/updateAlbumImg")
     @Transactional(rollbackFor = Exception.class)
-    public String updateAlbumImgController(@RequestParam("file") MultipartFile file, @RequestParam("albumId") int albumId){
+    public String updateAlbumImgController(@RequestParam("file") MultipartFile file,
+                                           @RequestParam("albumId") String albumId){
         HashMap<Object,Object> map=new HashMap<>(1);
-        map.put("albumId",albumId);
+        map.put("albumId",Integer.valueOf(albumId));
         HashMap<String,String> resultMap=new HashMap<>(1);
         if(!file.isEmpty()){
             String fileId= mongoDbFileService.uploadFile(file);

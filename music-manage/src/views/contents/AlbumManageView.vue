@@ -18,7 +18,7 @@
               </div>
             </template>
           </el-image>
-          <el-button type="primary" size="small" @click="editAlbum(row.singerId);uploadAlbumImgVisible = true">上传图片</el-button>
+          <el-button type="primary" size="small" @click="editAlbum(row.albumId);uploadAlbumImgVisible = true">上传图片</el-button>
         </template>
       </el-table-column>
       <el-table-column fixed="right" label="操作" width="270">
