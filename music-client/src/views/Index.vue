@@ -59,7 +59,7 @@
             <!--歌曲长度-->
             <div style="float: right;height: 24px;">
               <span style="color: #f9f9f9;font-size: 13px">
-                {{util.formatSongTime(songTime)}}/{{util.formatSongTime(totalTime)}}
+                {{util.formatSongTime(songTime)}}/{{ util.formatSongTime(totalTime) }}
               </span>
             </div>
           </div>
@@ -135,10 +135,10 @@
       </div>
     </div>
   </div>
-  <div style="display: none"><audio ref="myAudio" :src="playUrl"></audio></div>
+  <div style="display: none"><audio id="MyAudio_1" ref="myAudio" :src="playUrl" preload="auto"></audio></div>
 </template>
 
-<script setup>
+<script>
   import {ref,watch,reactive} from 'vue';
   import {Avatar} from '@element-plus/icons-vue';
   import {ArrowUpBold} from '@element-plus/icons-vue';
@@ -151,153 +151,173 @@
   import { Delete } from '@element-plus/icons-vue';
   import { Download } from '@element-plus/icons-vue';
   import { inject } from 'vue';
-  const activeIndex = ref('1');
-  const play_bar = ref(null);
-  const play_bar_play = ref(null);
-  const volume_panel = ref(null);
-  const playback_mode_panel = ref(null);
-  const playback_mode_button = ref(null);
-  const direction = ref('rtl');
-  const playListVisible = ref(false);
-  //创建一个网页播放器
-  const myAudio= ref(null);
-  //获取到的全局播放列表
-  let playList = inject('global').playList;
-  //当前播放音频地址
-  let playUrl = ref('');
-  //当前播放的项目在播放列表的索引
-  let playListIndex = ref(0);
-  //当前播放歌曲名
-  let songName = ref('暂无歌曲');
-  //当前显示还是隐藏播放栏
-  let playBarIcon = ref(ArrowUpBold);
-  //当前播放到的歌曲时间
-  let songTime = ref(0);
-  //当前音量
-  let volume = ref(50);
-  //当前播放状态 0暂停/1播放
-  let playState = ref(0);
-  //当前播放模式 0列表循环/1单曲循环/2随机播放
-  let playbackMode = ref(0);
-  //当前播放歌曲总时长
-  let totalTime = ref(0);
-  let albumImgUrl = ref('');
-  let itemKey = ref(Math.random());
-  const handleSelect = (key, keyPath) => {
-    //console.log(key, keyPath);
-  }
-  function PlayBar(){
-    if(play_bar.value.style.display === 'none'){
-      play_bar.value.style.display = 'block';
-      playBarIcon.value = ArrowDownBold;
-    }else {
-      play_bar.value.style.display = 'none';
-      playBarIcon.value = ArrowUpBold;
-    }
-  }
-  function playOrSuspend(index){
-    //当前音频播放或暂停时的动作
-    if(playState.value === 0){
-      //暂停时
-      Play(index);
-    }else {
-      //播放时
-      Suspend();
-    }
-  }
-  function Play(index){
-    //当播放音频时要执行的函数(index为要播放播放列表的哪一项的索引)
-    //获取当前要播放的歌曲信息
-    const curSongInfo = playList[index];
-    playListIndex.value = index;
-    songName.value = curSongInfo.songName;
-    albumImgUrl.value = curSongInfo.albumImgUrl;
-    playUrl.value = curSongInfo.songPlayUrl;
-    playState.value = 1;
-    play_bar_play.value.style.backgroundPosition = '-60px -60px';
-    let playPromise = myAudio.value.play();
-    if (playPromise !== undefined) {
-      //防止myAudio.duration为NaN
-      playPromise.then(() => {
-        setTimeout(()=>{
-          totalTime.value = myAudio.value.duration;
-        },myAudio.value.duration);
-      }).catch((error)=>{
-        console.log(playUrl.value);
-        console.log(error);
-      });
-      //添加监听器监听播放器的改变并实时更新进度条和当前时间
-      myAudio.value.addEventListener('timeupdate',function (){
-        songTime.value = myAudio.value.currentTime;
-      });
-      //添加监听器监听播放结束时的播放模式并作出相应改变
-      myAudio.value.addEventListener('ended',()=>{
-        if(playbackMode.value === 0){
-          Play((index+1)%playList.length);
-        }else if(playbackMode.value === 1){
-          Play(index);
+  export default {
+    setup(){
+      const activeIndex = ref('1');
+      const play_bar = ref(null);
+      const play_bar_play = ref(null);
+      const volume_panel = ref(null);
+      const playback_mode_panel = ref(null);
+      const playback_mode_button = ref(null);
+      const direction = ref('rtl');
+      const playListVisible = ref(false);
+      //创建一个网页播放器
+      const myAudio= ref(null);
+      //获取到的全局播放列表
+      let playList = inject('global').playList;
+      //当前播放音频地址
+      let playUrl = ref('');
+      //当前播放的项目在播放列表的索引
+      let playListIndex = ref(0);
+      //当前播放歌曲名
+      let songName = ref('暂无歌曲');
+      //当前显示还是隐藏播放栏
+      let playBarIcon = ref(ArrowUpBold);
+      //当前播放到的歌曲时间
+      let songTime = ref(0);
+      //当前音量
+      let volume = ref(50);
+      //当前播放状态 0暂停/1播放
+      let playState = ref(0);
+      //当前播放模式 0列表循环/1单曲循环/2随机播放
+      let playbackMode = ref(0);
+      //当前播放歌曲总时长
+      let totalTime = ref(0);
+      let albumImgUrl = ref('');
+      let itemKey = ref(Math.random());
+      const handleSelect = (key, keyPath) => {
+        //console.log(key, keyPath);
+      }
+      //播放条显示或隐藏
+      const PlayBar=()=>{
+        if(play_bar.value.style.display === 'none'){
+          play_bar.value.style.display = 'block';
+          playBarIcon.value = ArrowDownBold;
+        }else {
+          play_bar.value.style.display = 'none';
+          playBarIcon.value = ArrowUpBold;
         }
-      })
+      }
+      //当前音频播放或暂停时的动作
+      const playOrSuspend=(index)=>{
+        if(playState.value === 0){
+          //暂停时
+          Play(index);
+        }else {
+          //播放时
+          Suspend();
+        }
+      }
+      //当播放音频时要执行的函数(index为要播放播放列表的哪一项的索引)
+      const Play=(index)=>{
+        //获取当前要播放的歌曲信息
+        const curSongInfo = playList[index];
+        playListIndex.value = index;
+        songName.value = curSongInfo.songName;
+        albumImgUrl.value = curSongInfo.albumImgUrl;
+        playUrl.value = curSongInfo.songPlayUrl;
+        playState.value = 1;
+        play_bar_play.value.style.backgroundPosition = '-60px -60px';
+        let playPromise = myAudio.value.play();
+        if (playPromise !== undefined) {
+          //防止myAudio.duration为NaN
+          playPromise.then(() => {
+            setTimeout(()=>{
+              totalTime.value = myAudio.value.duration;
+            },myAudio.value.duration);
+          }).catch((error)=>{
+            console.log(playUrl.value);
+            console.log(error);
+          });
+          //添加监听器监听播放器的改变并实时更新进度条和当前时间
+          myAudio.value.addEventListener('timeupdate',()=>{
+            songTime.value = myAudio.value.currentTime;
+          });
+          //添加监听器监听播放结束时的播放模式并作出相应改变
+          myAudio.value.addEventListener('ended',()=>{
+            if(playbackMode.value === 0){
+              Play((index+1)%playList.length);
+            }else if(playbackMode.value === 1){
+              Play(index);
+            }
+          });
+        }
+      }
+      //当音频暂停时要执行的函数
+      const Suspend=()=>{
+        songTime.value = myAudio.value.currentTime;
+        myAudio.value.pause();
+        playState.value = 0;
+        play_bar_play.value.style.backgroundPosition = '0 0';
+      }
+      //监听函数，监听音量滑动条的改变来动态设置音量大小
+      watch(volume,()=>{
+        myAudio.value.volume = volume.value/100;
+      });
+      //从播放列表中删除项目
+      const deleteSongFromPlayList=(index)=>{
+        playList.splice(index,1);
+        itemKey.value = Math.random();
+        ElMessage({
+          message: '移除成功',
+          type: 'success',
+        })
+      }
+      //播放当前index的上一首歌曲
+      const lastMusic=(index)=>{
+        if(index-1 < 0){
+          Play(playList.length - 1);
+        }else{
+          Play(index - 1);
+        }
+      }
+      //播放当前index的下一首歌曲
+      const nextMusic=(index)=>{
+        Play((index+1)%playList.length);
+      }
+      //点击进度条改变当前歌曲播放位置
+      const clickSlider=()=>{
+        myAudio.value.currentTime = songTime.value;
+      }
+      //音量控制面板出现
+      const volumeAppear=()=>{
+        volume_panel.value.style.display = 'block';
+      }
+      //音量控制面板消失
+      const volumeDisappear=()=>{
+        volume_panel.value.style.display = 'none';
+      }
+      //播放模式面板出现
+      const playbackModePanelAppear=()=>{
+        playback_mode_panel.value.style.display = 'block';
+      }
+      //选择了列表循环模式
+      const selectPlayMode0=()=>{
+        playbackMode.value = 0;
+        playback_mode_button.value.style.backgroundPosition = '-64px -179px';
+        playback_mode_panel.value.style.display = 'none';
+      }
+      //选择了单曲循环模式
+      const selectPlayMode1=()=>{
+        playbackMode.value = 1;
+        playback_mode_button.value.style.backgroundPosition = '0 -179px';
+        playback_mode_panel.value.style.display = 'none';
+      }
+      //选择了随机播放模式
+      const selectPlayMode2=()=>{
+        playbackMode.value = 2;
+        playback_mode_button.value.style.backgroundPosition = '-128px -179px';
+        playback_mode_panel.value.style.display = 'none';
+      }
+      return{
+        activeIndex,play_bar,play_bar_play,volume_panel,playback_mode_panel,playback_mode_button,
+        direction,playListVisible,myAudio,playList,playUrl,playListIndex,songName,playBarIcon,songTime,
+        volume,playState,playbackMode,totalTime,albumImgUrl,itemKey,handleSelect,PlayBar,playOrSuspend,
+        Play,Suspend,deleteSongFromPlayList,lastMusic,nextMusic,clickSlider,volumeAppear,playbackModePanelAppear,
+        selectPlayMode0,selectPlayMode1,selectPlayMode2,volumeDisappear,util,
+        Download,Delete,Headset,Fold,ArrowDownBold,ArrowUpBold,Avatar,IconPicture
+      }
     }
-  }
-  function Suspend(){
-    //当音频暂停时要执行的函数
-    songTime.value = myAudio.value.currentTime;
-    myAudio.value.pause();
-    playState.value = 0;
-    play_bar_play.value.style.backgroundPosition = '0 0';
-  }
-  //监听函数，监听音量滑动条的改变来动态设置音量大小
-  watch(volume,()=>{
-    myAudio.value.volume = volume.value/100;
-  });
-  //从播放列表中删除项目
-  function deleteSongFromPlayList(index){
-    playList.splice(index,1);
-    itemKey.value = Math.random();
-    ElMessage({
-      message: '移除成功',
-      type: 'success',
-    })
-  }
-  //播放当前index的上一首歌曲
-  function lastMusic(index){
-    if(index-1 < 0){
-      Play(playList.length - 1);
-    }else{
-      Play(index - 1);
-    }
-  }
-  //播放当前index的下一首歌曲
-  function nextMusic(index){
-    Play((index+1)%playList.length);
-  }
-  function clickSlider(){
-    myAudio.value.currentTime = songTime.value;
-  }
-  function volumeAppear(){
-    volume_panel.value.style.display = 'block';
-  }
-  function volumeDisappear(){
-    volume_panel.value.style.display = 'none';
-  }
-  function playbackModePanelAppear(){
-    playback_mode_panel.value.style.display = 'block';
-  }
-  function selectPlayMode0(){
-    playbackMode.value = 0;
-    playback_mode_button.value.style.backgroundPosition = '-64px -179px';
-    playback_mode_panel.value.style.display = 'none';
-  }
-  function selectPlayMode1(){
-    playbackMode.value = 1;
-    playback_mode_button.value.style.backgroundPosition = '0 -179px';
-    playback_mode_panel.value.style.display = 'none';
-  }
-  function selectPlayMode2(){
-    playbackMode.value = 2;
-    playback_mode_button.value.style.backgroundPosition = '-128px -179px';
-    playback_mode_panel.value.style.display = 'none';
   }
 </script>
 
