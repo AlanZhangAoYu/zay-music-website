@@ -45,7 +45,7 @@
             <el-image :src="albumImgUrl" style="height: 60px;width: 60px;margin-top: 10px">
               <template #error>
                 <div class="image-slot">
-                  <el-icon color="#f8f8f8"><icon-picture /></el-icon>
+                  <el-button color="#f8f8f8" :icon="IconPicture"></el-button>
                 </div>
               </template>
             </el-image>
@@ -65,7 +65,7 @@
           </div>
           <!--播放条中间下半部分: 进度条-->
           <div style="margin-top: 11px;height: 5px;">
-            <el-slider :max="totalTime" v-model="songTime" style="height: 0" @click="clickSlider"/>
+            <el-slider :max="totalTime" v-model="songTime" style="height: 0" :show-tooltip="false" @input="clickSlider"/>
           </div>
         </div>
         <div style="position: absolute;left: 710px;width: 260px;height: 80px;">
@@ -276,8 +276,8 @@
         Play((index+1)%playList.length);
       }
       //点击进度条改变当前歌曲播放位置
-      const clickSlider=()=>{
-        myAudio.value.currentTime = songTime.value;
+      const clickSlider=(now)=>{
+        myAudio.value.currentTime = now;
       }
       //音量控制面板出现
       const volumeAppear=()=>{
