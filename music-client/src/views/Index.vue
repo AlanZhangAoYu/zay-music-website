@@ -45,7 +45,7 @@
             <el-image :src="albumImgUrl" style="height: 60px;width: 60px;margin-top: 10px">
               <template #error>
                 <div class="image-slot">
-                  <el-button color="#f8f8f8" :icon="IconPicture"></el-button>
+                  <img src="../assets/image/default_image.jpg"/>
                 </div>
               </template>
             </el-image>
@@ -65,7 +65,7 @@
           </div>
           <!--播放条中间下半部分: 进度条-->
           <div style="margin-top: 11px;height: 5px;">
-            <el-slider :max="totalTime" v-model="songTime" style="height: 0" :show-tooltip="false" @input="clickSlider"/>
+            <el-slider :max="totalTime" v-model="songTime" style="height: 0" :show-tooltip="false" @input="clickSlider(songTime)"/>
           </div>
         </div>
         <div style="position: absolute;left: 710px;width: 260px;height: 80px;">
@@ -135,7 +135,9 @@
       </div>
     </div>
   </div>
-  <div style="display: none"><audio id="MyAudio_1" ref="myAudio" :src="playUrl" preload="auto"></audio></div>
+  <div style="display: none">
+    <audio id="MyAudio_1" ref="myAudio" :src="playUrl" preload="auto" @ended="songEnded(curSongIndex)" @timeupdate="changeSongTime"></audio>
+  </div>
 </template>
 
 <script>
@@ -183,6 +185,8 @@
       let playbackMode = ref(0);
       //当前播放歌曲总时长
       let totalTime = ref(0);
+      //当前播放歌曲在播放列表中的索引值
+      let curSongIndex = ref(0);
       let albumImgUrl = ref('');
       let itemKey = ref(Math.random());
       const handleSelect = (key, keyPath) => {
@@ -211,6 +215,7 @@
       //当播放音频时要执行的函数(index为要播放播放列表的哪一项的索引)
       const Play=(index)=>{
         //获取当前要播放的歌曲信息
+        curSongIndex.value = index;
         const curSongInfo = playList[index];
         playListIndex.value = index;
         songName.value = curSongInfo.songName;
@@ -218,29 +223,21 @@
         playUrl.value = curSongInfo.songPlayUrl;
         playState.value = 1;
         play_bar_play.value.style.backgroundPosition = '-60px -60px';
-        let playPromise = myAudio.value.play();
-        if (playPromise !== undefined) {
-          //防止myAudio.duration为NaN
-          playPromise.then(() => {
-            setTimeout(()=>{
-              totalTime.value = myAudio.value.duration;
-            },myAudio.value.duration);
-          }).catch((error)=>{
-            console.log(playUrl.value);
-            console.log(error);
-          });
-          //添加监听器监听播放器的改变并实时更新进度条和当前时间
-          myAudio.value.addEventListener('timeupdate',()=>{
-            songTime.value = myAudio.value.currentTime;
-          });
-          //添加监听器监听播放结束时的播放模式并作出相应改变
-          myAudio.value.addEventListener('ended',()=>{
-            if(playbackMode.value === 0){
-              Play((index+1)%playList.length);
-            }else if(playbackMode.value === 1){
-              Play(index);
-            }
-          });
+        setTimeout(()=>{
+          totalTime.value = myAudio.value.duration;
+          myAudio.value.play();
+        },myAudio.value.duration);
+      }
+      //添加监听器监听播放器的改变并实时更新进度条和当前时间
+      const changeSongTime=()=>{
+        songTime.value = myAudio.value.currentTime;
+      }
+      //添加监听器监听播放结束时的播放模式并作出相应改变
+      const songEnded=(index)=>{
+        if(playbackMode.value === 0){
+          Play((index+1)%playList.length);
+        }else if(playbackMode.value === 1){
+          Play(index);
         }
       }
       //当音频暂停时要执行的函数
@@ -276,8 +273,8 @@
         Play((index+1)%playList.length);
       }
       //点击进度条改变当前歌曲播放位置
-      const clickSlider=(now)=>{
-        myAudio.value.currentTime = now;
+      const clickSlider=(now,index)=>{
+        //myAudio.value.play();
       }
       //音量控制面板出现
       const volumeAppear=()=>{
@@ -314,8 +311,8 @@
         direction,playListVisible,myAudio,playList,playUrl,playListIndex,songName,playBarIcon,songTime,
         volume,playState,playbackMode,totalTime,albumImgUrl,itemKey,handleSelect,PlayBar,playOrSuspend,
         Play,Suspend,deleteSongFromPlayList,lastMusic,nextMusic,clickSlider,volumeAppear,playbackModePanelAppear,
-        selectPlayMode0,selectPlayMode1,selectPlayMode2,volumeDisappear,util,
-        Download,Delete,Headset,Fold,ArrowDownBold,ArrowUpBold,Avatar,IconPicture
+        selectPlayMode0,selectPlayMode1,selectPlayMode2,volumeDisappear,songEnded,changeSongTime,util,
+        Download,Delete,Headset,Fold,ArrowDownBold,ArrowUpBold,Avatar,IconPicture,curSongIndex
       }
     }
   }
