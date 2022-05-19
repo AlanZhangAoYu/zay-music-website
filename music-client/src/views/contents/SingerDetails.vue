@@ -60,7 +60,7 @@
                 <el-col :span="5"><div>{{ song.albumName }}</div></el-col>
                 <el-col :span="5"><div>{{ song.songType }}</div></el-col>
                 <el-col :span="2"><div>{{ song.songLength }}</div></el-col>
-                <el-col :span="1"><div><el-button color="#94defc" :icon="Headset" circle @click=""/></div></el-col>
+                <el-col :span="1"><div><el-button color="#94defc" :icon="Headset" circle @click="playThisMusic(song)"/></div></el-col>
                 <el-col :span="1"><div><el-button color="#94defc" :icon="Plus" circle @click="addSongToPlayList(song)"/></div></el-col>
                 <el-col :span="1"><div><el-button color="#94defc" :icon="Download" circle @click=""/></div></el-col>
               </el-row>
@@ -82,6 +82,7 @@
   import api from '../../router/index';
   import util from '../../util/util';
   import { ElMessage } from 'element-plus';
+  import Play from '../Index';
   import { Picture as IconPicture } from '@element-plus/icons-vue';
   import { Back } from '@element-plus/icons-vue';
   import { Headset } from '@element-plus/icons-vue';
@@ -142,6 +143,10 @@
       message: '添加成功',
       type: 'success',
     })
+  }
+  function playThisMusic(song){
+    addSongToPlayList(song);
+    Play.setup().Play(playList.length-1);
   }
   function backToSingerView(){
     router.push({
