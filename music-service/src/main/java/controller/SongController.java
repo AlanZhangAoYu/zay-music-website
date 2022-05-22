@@ -52,7 +52,9 @@ public class SongController {
         if(!songId.isEmpty()){
             map.put("songId",Integer.valueOf(songId));
         }
-        map.put("songName",songName);
+        if(!songName.isEmpty()){
+            map.put("songName",songName);
+        }
         if(!singerId.isEmpty()){
             map.put("singerId",Integer.valueOf(singerId));
         }

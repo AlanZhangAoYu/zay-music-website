@@ -35,6 +35,9 @@ public class AlbumService {
         }
         return albumId;
     }
+    public List<Album> selectAlbumByPara(Map<String,Object> map){
+        return albumMapper.selectAlbumByPara(map);
+    }
     public int selectAllAlbumCount(){
         return albumMapper.selectAllAlbumCount();
     }

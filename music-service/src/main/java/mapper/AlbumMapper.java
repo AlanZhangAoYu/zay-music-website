@@ -33,6 +33,13 @@ public interface AlbumMapper {
     List<Album> selectAlbumByName(String albumName);
 
     /**
+     * 根据参数查询专辑信息
+     * @param map 传入的参数信息
+     * @return 返回的专辑信息
+     */
+    List<Album> selectAlbumByPara(Map<String,Object> map);
+
+    /**
      * 查询所有的专辑数量
      * @return 返回所有的专辑数量
      */

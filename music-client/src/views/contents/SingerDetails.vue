@@ -67,7 +67,24 @@
             </div>
           </el-scrollbar>
         </el-tab-pane>
-        <el-tab-pane label="专辑" name="second">专辑</el-tab-pane>
+        <el-tab-pane label="专辑" name="second">
+          <el-scrollbar height="340px" class="scrollbar" style="top: 0">
+            <div v-for="album in albumList.albumList" :key="album" style="float: left;margin: 20px; height: 120px;width: 100px;">
+              <el-card shadow="hover" style="width: 100px;width: 120px;background-color: rgba(211,220,230,0.5)">
+                <el-image :src="album.albumImgUrl" fit="fill">
+                  <template #error>
+                    <div class="image-slot">
+                      <el-icon><icon-picture /></el-icon>
+                    </div>
+                  </template>
+                </el-image>
+                <div style="padding: 14px">
+                  <span>{{album.albumName}}</span>
+                </div>
+              </el-card>
+            </div>
+          </el-scrollbar>
+        </el-tab-pane>
       </el-tabs>
     </div>
   </div>
@@ -105,14 +122,29 @@
   selectSingerBySingerId(singerId.value);
   let songList=reactive({songList: []});
   selectSongBySingerId(singerId.value);
+  let albumList = reactive({albumList: []});
+  selectAlbumBySingerId(singerId.value);
   function selectSingerBySingerId(singerId){
-    axios.get(api.baseUrl.baseUrl+'/selectSingerByPara',{params:{singerId: singerId,singerName: '',singerLocation: ''}}).then((response)=>{
-      singerInfo.info.singerId = response.data.singerId;
-      singerInfo.info.singerName = response.data.singerName;
-      singerInfo.info.singerBirth = util.dateFormat(response.data.singerBirth);
-      singerInfo.info.singerIntroduction = response.data.singerIntroduction;
-      singerInfo.info.singerLocation = response.data.singerLocation;
-      singerInfo.info.singerImg = api.baseUrl.baseUrl+'/previewFile/'+response.data.singerImgId;
+    axios.get(api.baseUrl.baseUrl+'/selectSingerByPara',{params:{singerId: singerId,singerName: '',singerLocation: ''}})
+        .then((response)=>{
+          singerInfo.info.singerId = response.data.singerId;
+          singerInfo.info.singerName = response.data.singerName;
+          singerInfo.info.singerBirth = util.dateFormat(response.data.singerBirth);
+          singerInfo.info.singerIntroduction = response.data.singerIntroduction;
+          singerInfo.info.singerLocation = response.data.singerLocation;
+          singerInfo.info.singerImg = api.baseUrl.baseUrl+'/previewFile/'+response.data.singerImgId;
+    });
+  }
+  function selectAlbumBySingerId(singerId){
+    axios.get(api.baseUrl.baseUrl+'/selectAlbumByPara',{params:{albumId: '',albumName: '',singerId: singerId,year: ''}})
+        .then((response)=>{
+          albumList.albumList = [];
+          for(let i in response.data){
+            albumList.albumList.push({
+              albumName: response.data[i].albumName,
+              albumImgUrl: api.baseUrl.baseUrl+'/previewFile/'+response.data[i].albumImgId
+            });
+          }
     });
   }
   function selectSongBySingerId(singerId){

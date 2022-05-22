@@ -33,6 +33,32 @@ public class AlbumController {
         map.put("AllAlbumCount",albumService.selectAllAlbumCount());
         return JSON.toJSONString(map);
     }
+    @GetMapping(value = "/selectAlbumByPara")
+    public String selectAlbumByParaController(@RequestParam("albumId") String albumId,
+                                              @RequestParam("albumName") String albumName,
+                                              @RequestParam("singerId") String singerId,
+                                              @RequestParam("year") String year){
+        HashMap<String,Object> resultMap=new HashMap<>(1);
+        HashMap<String,Object> map = new HashMap<>(4);
+        if(!albumId.isEmpty()){
+            map.put("albumId",albumId);
+        }
+        if(!albumName.isEmpty()){
+            map.put("albumName",albumName);
+        }
+        if(!singerId.isEmpty()){
+            map.put("singerId",singerId);
+        }
+        if(!year.isEmpty()){
+            map.put("year",year);
+        }
+        List<Album> list = albumService.selectAlbumByPara(map);
+        if(list.isEmpty()){
+            resultMap.put("msg",GlobalConstant.NO_DATA);
+            return JSON.toJSONString(resultMap);
+        }
+        return JSON.toJSONString(list);
+    }
     @PostMapping(value = "/updateAlbumImg")
     @Transactional(rollbackFor = Exception.class)
     public String updateAlbumImgController(@RequestParam("file") MultipartFile file,
