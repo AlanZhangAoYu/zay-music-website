@@ -26,6 +26,10 @@ const routes = [
       {
         path: '/SingerDetail/:singerId',
         component: () => import('../views/contents/SingerDetails')
+      },
+      {
+        path: '/AlbumDetails/:albumId',
+        component: () => import('../views/contents/AlbumDetails')
       }
     ]
   }

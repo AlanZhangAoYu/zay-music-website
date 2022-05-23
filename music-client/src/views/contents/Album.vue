@@ -18,7 +18,7 @@
         :clickEffect="true"
         clickMode="push">
     </vue-particles>
-    <div id="main">专辑</div>
+    <div id="main">专辑详情</div>
   </div>
 </template>
 
