@@ -19,7 +19,7 @@
         clickMode="push">
     </vue-particles>
   </div>
-  <div id="main">专辑</div>
+  <div id="main">专辑详情</div>
 </template>
 
 <script>
@@ -36,7 +36,12 @@ export default {
   background-color: #f9f9f9;
 }
 #main{
+  width: 80%;
+  height: 300px;
+  margin: auto 0;
+  border: 2px solid #545c64;
   position: absolute;
+  left: 10%;
   top: 60px;
 }
 </style>

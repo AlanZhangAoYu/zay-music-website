@@ -18,8 +18,8 @@
         :clickEffect="true"
         clickMode="push">
     </vue-particles>
-    <div id="main" style="width: 100%;">
-      <div id="singerList" style="width: 70%;margin: 20px auto;">
+    <div id="main">
+      <div id="singerList" style="width: 100%">
         <div v-for="singer in singerList.singerList" style="float: left;width: 200px;margin: 20px;">
           <el-card class="card" :body-style="{ padding: '0px' }" shadow="hover">
             <a href="javascript:void(0);" @click="gotoSingerDetail(singer.singerId)">
@@ -42,7 +42,7 @@
             background
             @current-change="handleCurrentChange"
             :current-page="currentPage.value"
-            :page-size="8"
+            :page-size="10"
             layout="prev, pager, next, jumper"
             :total="totalLength.total"/>
       </div>
@@ -63,7 +63,7 @@
   selectAllSingerCount();
   selectAllSinger(currentPage.value);
   function selectAllSinger(pageNum){
-    axios.get(api.baseUrl.baseUrl+'/selectAllSinger',{params:{pageNum : pageNum, pageSize : 8}})
+    axios.get(api.baseUrl.baseUrl+'/selectAllSinger',{params:{pageNum : pageNum, pageSize : 10}})
         .then((response) => {
           singerList.singerList = [];
           for(let i in response.data){
@@ -93,7 +93,9 @@
 
 <style scoped>
 #main{
+  width: 80%;
   position: absolute;
+  left: 10%;
   top: 60px;
 }
 #particles{
