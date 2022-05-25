@@ -69,19 +69,18 @@
         </el-tab-pane>
         <el-tab-pane label="专辑" name="second">
           <el-scrollbar height="340px" class="scrollbar" style="top: 0">
-            <div v-for="album in albumList.albumList" :key="album" style="float: left;margin: 20px; height: 120px;width: 100px;">
-              <el-card shadow="hover" style="width: 100px;width: 120px;background-color: rgba(211,220,230,0.5)">
-                <el-image :src="album.albumImgUrl" fit="fill">
+            <div v-for="album in albumList.albumList" class="album_list_item">
+              <div style="position: absolute">
+                <el-image style="width: 100px;height: 100px;margin: 10px;" :src="album.albumImgUrl" fit="fill">
                   <template #error>
                     <div class="image-slot">
-                      <el-icon><icon-picture /></el-icon>
+                      <img src="../../assets/image/default_image.jpg"/>
                     </div>
                   </template>
                 </el-image>
-                <div style="padding: 14px">
-                  <span>{{album.albumName}}</span>
-                </div>
-              </el-card>
+                <div style="position: relative;left: 115px;top: -100px;">{{album.albumName}}</div>
+                <div style="font-size: 10px;color: #99a9bf;position: relative;left: 115px;top: -70px;">发行年份:{{album.year}}</div>
+              </div>
             </div>
           </el-scrollbar>
         </el-tab-pane>
@@ -142,6 +141,7 @@
           for(let i in response.data){
             albumList.albumList.push({
               albumName: response.data[i].albumName,
+              year: response.data[i].year,
               albumImgUrl: api.baseUrl.baseUrl+'/previewFile/'+response.data[i].albumImgId
             });
           }
@@ -213,6 +213,18 @@
   height: 30px;
   padding: 10px;
   border: 2px solid rgba(230,234,239,0.36);
+}
+.album_list_item{
+  width: 250px;
+  height: 150px;
+  float: left;
+  margin: 25px;
+  border-radius: 10px;
+  background-color: rgba(211,220,230,0.5);
+  border: 2px solid #f9f9f9;
+}
+.album_list_item:hover{
+  border: 2px solid #99a9bf;
 }
 .row:hover{
   border: 2px solid rgba(0, 0, 0, 0.36);

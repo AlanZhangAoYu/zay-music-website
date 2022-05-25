@@ -19,6 +19,7 @@
         clickMode="push">
     </vue-particles>
     <div id="main">
+      <div>共{{totalLength.total}}位歌手</div>
       <div id="singerList" style="width: 100%">
         <div v-for="singer in singerList.singerList" style="float: left;width: 200px;margin: 20px;">
           <el-card class="card" :body-style="{ padding: '0px' }" shadow="hover">

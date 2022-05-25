@@ -111,7 +111,7 @@
           </div>
           <div style="position: relative;top: -23px;left: 150px;">
             <!--播放列表按钮-->
-            <el-button :icon="Fold" @click="playListVisible = true" style="height: 35px;width: 35px;" circle></el-button>
+            <el-button :icon="Fold" @click="itemKey = Math.random();playListVisible = true" style="height: 35px;width: 35px;" circle></el-button>
             <!--播放列表抽屉主窗口-->
             <el-drawer
                 v-model="playListVisible"
