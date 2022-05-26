@@ -47,7 +47,7 @@ public class SingerController {
             resultMap.put("msg",GlobalConstant.NO_DATA);
             return JSON.toJSONString(resultMap);
         }
-        return JSON.toJSONString(list.get(0));
+        return JSON.toJSONString(list);
     }
     @PostMapping(value = "/updateSingerImg")
     @Transactional(rollbackFor = Exception.class)

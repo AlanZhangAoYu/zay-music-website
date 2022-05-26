@@ -13,6 +13,7 @@ body{
 }
 a{
   text-decoration: none;
+  color: black;
 }
 li, ol, ul {
   list-style: none;

@@ -22,17 +22,19 @@
       <div>共{{totalLength.total}}张专辑</div>
       <div id="album_list">
         <div v-for="album in albumList.albumList" class="album_list_item">
-          <div style="position: absolute">
-            <el-image style="width: 100px;height: 100px;margin: 10px;" :src="album.albumImgUrl" fit="fill">
-              <template #error>
-                <div class="image-slot">
-                  <img src="../../assets/image/default_image.jpg"/>
-                </div>
-              </template>
-            </el-image>
-            <div style="position: relative;left: 115px;top: -100px;">{{album.albumName}}</div>
-            <div style="font-size: 10px;color: #99a9bf;position: relative;left: 115px;top: -70px;">发行年份:{{album.year}}</div>
-          </div>
+          <a href="javascript:void(0)" @click="gotoAlbumDetail(album.albumId)">
+            <div style="position: absolute">
+              <el-image style="width: 100px;height: 100px;margin: 10px;" :src="album.albumImgUrl" fit="fill">
+                <template #error>
+                  <div class="image-slot">
+                    <img src="../../assets/image/default_image.jpg"/>
+                  </div>
+                </template>
+              </el-image>
+              <div style="position: relative;left: 115px;top: -100px;">{{album.albumName}}</div>
+              <div style="font-size: 10px;color: #99a9bf;position: relative;left: 115px;top: -70px;">发行年份:{{album.year}}</div>
+            </div>
+          </a>
         </div>
       </div>
       <div class="pagination" style="position: absolute;left: 40%;top: 650px;">
@@ -60,9 +62,7 @@ export default {
     const router = useRouter();
     let currentPage = ref(1);
     let totalLength = reactive({total:''});
-    //selectAllSingerCount();
     let albumList=reactive({albumList:[]});
-    //selectAllAlbum(currentPage.value);
     const selectAllSingerCount=()=>{
       axios.get(api.baseUrl.baseUrl+'/selectAllAlbumCount').then((response) => {
         totalLength.total = response.data.AllAlbumCount;
@@ -83,6 +83,11 @@ export default {
               }
             });
     };
+    const gotoAlbumDetail=(albumId)=>{
+      router.push({
+        path: `/AlbumDetail/${albumId}`
+      });
+    };
     const handleCurrentChange=(val)=>{
       currentPage.value = val;
       selectAllAlbum(currentPage.value);
@@ -91,7 +96,7 @@ export default {
       selectAllSingerCount();
       selectAllAlbum(currentPage.value);
     });
-    return{albumList,currentPage,totalLength,handleCurrentChange,IconPicture}
+    return{albumList,currentPage,totalLength,handleCurrentChange,gotoAlbumDetail,IconPicture}
   }
 }
 </script>

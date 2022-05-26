@@ -126,12 +126,12 @@
   function selectSingerBySingerId(singerId){
     axios.get(api.baseUrl.baseUrl+'/selectSingerByPara',{params:{singerId: singerId,singerName: '',singerLocation: ''}})
         .then((response)=>{
-          singerInfo.info.singerId = response.data.singerId;
-          singerInfo.info.singerName = response.data.singerName;
-          singerInfo.info.singerBirth = util.dateFormat(response.data.singerBirth);
-          singerInfo.info.singerIntroduction = response.data.singerIntroduction;
-          singerInfo.info.singerLocation = response.data.singerLocation;
-          singerInfo.info.singerImg = api.baseUrl.baseUrl+'/previewFile/'+response.data.singerImgId;
+          singerInfo.info.singerId = response.data[0].singerId;
+          singerInfo.info.singerName = response.data[0].singerName;
+          singerInfo.info.singerBirth = util.dateFormat(response.data[0].singerBirth);
+          singerInfo.info.singerIntroduction = response.data[0].singerIntroduction;
+          singerInfo.info.singerLocation = response.data[0].singerLocation;
+          singerInfo.info.singerImg = api.baseUrl.baseUrl+'/previewFile/'+response.data[0].singerImgId;
     });
   }
   function selectAlbumBySingerId(singerId){

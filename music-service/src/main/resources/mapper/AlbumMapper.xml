@@ -14,7 +14,8 @@
         select count(`albumId`) from `album_tab`
     </select>
     <select id="selectAlbumByPara" resultMap="selectAlbumMap">
-        select `albumId`,`albumName`,`singerId`,`year`,`albumImgId` from `album_tab`
+        select `albumId`,`albumName`,`album_tab`.`singerId`,`singerName`,`year`,`albumImgId`
+        from`album_tab` inner join `singer_tab`  on `album_tab`.`singerId` = `singer_tab`.`singerId`
         <where>
             <if test="albumId != null and albumId != ''">
                 and `albumId` = #{albumId}
@@ -23,7 +24,7 @@
                 and `albumName` like concat(#{albumName},'%')
             </if>
             <if test="singerId != null and singerId != ''">
-                and `singerId` = #{singerId}
+                and `album_tab`.`singerId` = #{singerId}
             </if>
             <if test="year != null and year != ''">
                 and `year` = #{year}

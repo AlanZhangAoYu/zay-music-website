@@ -28,7 +28,7 @@ const routes = [
         component: () => import('../views/contents/SingerDetails')
       },
       {
-        path: '/AlbumDetails/:albumId',
+        path: '/AlbumDetail/:albumId',
         component: () => import('../views/contents/AlbumDetails')
       }
     ]
