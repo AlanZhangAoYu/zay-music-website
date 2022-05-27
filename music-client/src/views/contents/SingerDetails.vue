@@ -221,7 +221,7 @@
   margin: 25px;
   border-radius: 10px;
   background-color: rgba(211,220,230,0.5);
-  border: 2px solid #f9f9f9;
+  border: 2px solid rgba(211,220,230,0.5);
 }
 .album_list_item:hover{
   border: 2px solid #99a9bf;

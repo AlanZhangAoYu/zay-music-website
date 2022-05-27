@@ -42,7 +42,7 @@
             background
             @current-change="handleCurrentChange"
             :current-page="currentPage"
-            :page-size="10"
+            :page-size="12"
             layout="prev, pager, next, jumper"
             :total="totalLength.total"/>
       </div>
@@ -69,7 +69,7 @@ export default {
       });
     }
     const selectAllAlbum = (pageNum)=>{
-      axios.get(api.baseUrl.baseUrl+'/selectAllAlbum',{params:{pageNum: pageNum,pageSize: 10}})
+      axios.get(api.baseUrl.baseUrl+'/selectAllAlbum',{params:{pageNum: pageNum,pageSize: 12}})
             .then((response) => {
               albumList.albumList = [];
               for(let i in response.data){
