@@ -22,12 +22,23 @@
   </div>
 </template>
 
-<script setup>
+<script>
+import {ref} from 'vue';
+export default{
+  name: 'ListView',
+  setup(){
+    return{}
+  }
+}
 </script>
 
 <style scoped>
 #main{
+  width: 80%;
+  height: 500px;
+  border: 2px solid black;
   position: absolute;
+  left: 10%;
   top: 60px;
 }
 #particles{
