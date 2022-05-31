@@ -16,7 +16,8 @@
           <el-menu-item index="2"><router-link to="/ListView" class="a">榜单</router-link></el-menu-item>
           <el-menu-item index="3"><router-link to="/SingerView" class="a">歌手</router-link></el-menu-item>
           <el-menu-item index="4"><router-link to="/AlbumView" class="a">专辑</router-link></el-menu-item>
-          <el-button type="primary" :icon="Avatar" circle style="position: absolute;margin-top: 15px;right: 20px;"/>
+          <el-button type="primary" :icon="Avatar" circle style="position: absolute;margin-top: 15px;right: 20px;"
+                     @click="userLoginVisible = true"/>
         </el-menu>
       </el-header>
       <el-main style="width: 100%">
@@ -138,10 +139,35 @@
   <div style="display: none">
     <audio id="MyAudio_1" ref="myAudio" :src="playUrl" preload="auto" @ended="songEnded(curSongIndex)" @timeupdate="changeSongTime"></audio>
   </div>
+
+  <el-dialog v-model="userLoginVisible" title="用户登录" width="30%" @opened="drawPic('12x5')">
+    <el-form v-model="userLoginList">
+      <el-form-item label="账号">
+        <el-input v-model="userLoginList.userName" placeholder="请输入账号"/>
+      </el-form-item>
+      <el-form-item label="密码">
+        <el-input v-model="userLoginList.password" type="password" placeholder="请输入密码" show-password/>
+      </el-form-item>
+      <el-form-item label="验证码">
+        <el-input v-model="userLoginList.verification" placeholder="请输入验证码"/>
+        <div>
+          <canvas ref="code_picture" width="117" height="32"></canvas>
+        </div>
+      </el-form-item>
+    </el-form>
+    <div>没有账号?<el-link type="primary" @click="gotoUserRegister">点我注册</el-link></div>
+    <template #footer>
+      <span class="dialog-footer">
+        <el-button @click="userLoginVisible = false">取消</el-button>
+        <el-button type="primary" @click="">登录</el-button>
+      </span>
+    </template>
+  </el-dialog>
 </template>
 
 <script>
-  import {ref,watch,reactive} from 'vue';
+  import {ref,watch,reactive,onMounted} from 'vue';
+  import {useRouter} from 'vue-router';
   import {Avatar} from '@element-plus/icons-vue';
   import {ArrowUpBold} from '@element-plus/icons-vue';
   import {ArrowDownBold} from '@element-plus/icons-vue';
@@ -161,8 +187,15 @@
       const volume_panel = ref(null);
       const playback_mode_panel = ref(null);
       const playback_mode_button = ref(null);
+      const code_picture = ref(null);
       const direction = ref('rtl');
       const playListVisible = ref(false);
+      const userLoginVisible = ref(false);
+      let userLoginList=reactive({
+        userName: '',
+        password: '',
+        verification: ''
+      });
       //创建一个网页播放器
       const myAudio= ref(null);
       //获取到的全局播放列表
@@ -189,6 +222,9 @@
       let curSongIndex = ref(0);
       let albumImgUrl = ref('');
       let itemKey = ref(Math.random());
+      const imgForm = reactive({
+        fileList: []
+      });
       const handleSelect = (key, keyPath) => {
         //console.log(key, keyPath);
       }
@@ -306,13 +342,97 @@
         playback_mode_button.value.style.backgroundPosition = '-128px -179px';
         playback_mode_panel.value.style.display = 'none';
       }
+      const router=useRouter();
+      const userRegister=router.resolve({
+        path: '/UserRegister'
+      });
+      const gotoUserRegister=()=>{
+        window.open(userRegister.href);
+      }
+      const randomNum=(min, max)=>{
+        return Math.floor(Math.random() * (max - min) + min);
+      }
+      // 生成一个随机的颜色
+      const randomColor=(min, max)=>{
+        let r = randomNum(min, max);
+        let g = randomNum(min, max);
+        let b = randomNum(min, max);
+        return 'rgb(' + r + ',' + g + ',' + b + ')';
+      }
+      //根据后端传入的codeStr画图片
+      const drawPic=(codeStr) =>{
+        let ctx = code_picture.value.getContext('2d');
+        ctx.textBaseline = 'bottom';
+        // 绘制背景
+        ctx.fillStyle = '#e6ecfd';
+        ctx.fillRect(0, 0, 117, 32);
+        // 绘制文字
+        for (let i = 0; i < codeStr.length; i++) {
+          drawText(ctx, codeStr[i], i,codeStr);
+        }
+        drawLine(ctx);
+        drawDot(ctx);
+      }
+      const drawText=(ctx, txt, i,codeStr)=>{
+        // 随机生成字体颜色
+        ctx.fillStyle = randomColor(50, 160);
+        // 随机生成字体大小
+        ctx.font = randomNum(25, 35) + 'px SimHei';
+        let x = (i + 1) * (117 / (codeStr.length + 1));
+        let y = randomNum(35, 25 - 5);
+        let deg = randomNum(-30, 30);
+        // 修改坐标原点和旋转角度
+        ctx.translate(x, y);
+        ctx.rotate(deg * Math.PI / 180);
+        ctx.fillText(txt, 0, 0);
+        // 恢复坐标原点和旋转角度
+        ctx.rotate(-deg * Math.PI / 180);
+        ctx.translate(-x, -y);
+      }
+      const drawLine =(ctx)=> {
+        // 绘制干扰线
+        for (let i = 0; i < 4; i++) {
+          ctx.strokeStyle = randomColor(100, 200);
+          ctx.beginPath();
+          ctx.moveTo(randomNum(0, 117), randomNum(0, 32));
+          ctx.lineTo(randomNum(0, 117), randomNum(0, 32));
+          ctx.stroke();
+        }
+      }
+      const drawDot =(ctx) =>{
+        // 绘制干扰点
+        for (let i = 0; i < 30; i++) {
+          ctx.fillStyle = randomColor(0, 255);
+          ctx.beginPath();
+          ctx.arc(randomNum(0, 117), randomNum(0, 32), 1, 0, 2 * Math.PI);
+          ctx.fill();
+        }
+      }
       return{
         activeIndex,play_bar,play_bar_play,volume_panel,playback_mode_panel,playback_mode_button,
         direction,playListVisible,myAudio,playList,playUrl,playListIndex,songName,playBarIcon,songTime,
         volume,playState,playbackMode,totalTime,albumImgUrl,itemKey,handleSelect,PlayBar,playOrSuspend,
         Play,Suspend,deleteSongFromPlayList,lastMusic,nextMusic,clickSlider,volumeAppear,playbackModePanelAppear,
         selectPlayMode0,selectPlayMode1,selectPlayMode2,volumeDisappear,songEnded,changeSongTime,util,
-        Download,Delete,Headset,Fold,ArrowDownBold,ArrowUpBold,Avatar,IconPicture,curSongIndex
+        Download,Delete,Headset,Fold,ArrowDownBold,ArrowUpBold,Avatar,IconPicture,curSongIndex,userLoginVisible,
+        userLoginList,gotoUserRegister,randomNum,randomColor,drawPic,drawText,drawLine,drawDot,code_picture
+      }
+    },
+    methods:{
+      drawPic(codeStr){
+        this.$nextTick(()=>{
+          let ctx = this.code_picture.getContext('2d');
+          ctx.textBaseline = 'bottom';
+          // 绘制背景
+          ctx.fillStyle = '#e6ecfd';
+          ctx.fillRect(0, 0, 117, 32);
+          // 绘制文字
+          for (let i = 0; i < codeStr.length; i++) {
+            this.drawText(ctx, codeStr[i], i,codeStr);
+          }
+          this.drawLine(ctx);
+          this.drawDot(ctx);
+        });
       }
     }
   }

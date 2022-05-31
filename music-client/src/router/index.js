@@ -32,6 +32,10 @@ const routes = [
         component: () => import('../views/contents/AlbumDetails')
       }
     ]
+  },
+  {
+    path: '/UserRegister',
+    component: () => import('../views/contents/UserRegister')
   }
 ];
 const router = createRouter({
