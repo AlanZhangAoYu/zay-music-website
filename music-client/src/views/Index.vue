@@ -159,7 +159,7 @@
     <template #footer>
       <span class="dialog-footer">
         <el-button @click="userLoginVisible = false">取消</el-button>
-        <el-button type="primary" @click="">登录</el-button>
+        <el-button type="primary" @click="userLogin">登录</el-button>
       </span>
     </template>
   </el-dialog>
@@ -168,6 +168,7 @@
 <script>
   import {ref,watch,reactive,onMounted} from 'vue';
   import {useRouter} from 'vue-router';
+  import axios from 'axios';
   import {Avatar} from '@element-plus/icons-vue';
   import {ArrowUpBold} from '@element-plus/icons-vue';
   import {ArrowDownBold} from '@element-plus/icons-vue';
@@ -407,6 +408,9 @@
           ctx.arc(randomNum(0, 117), randomNum(0, 32), 1, 0, 2 * Math.PI);
           ctx.fill();
         }
+      }
+      const userLogin=()=>{
+
       }
       return{
         activeIndex,play_bar,play_bar_play,volume_panel,playback_mode_panel,playback_mode_button,

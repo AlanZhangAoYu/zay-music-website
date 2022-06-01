@@ -2,6 +2,7 @@ import org.junit.Test;
 import util.Md5Util;
 import util.Mp3Util;
 import util.RandomSaltUtil;
+import util.VerificationCodeUtil;
 
 import java.io.File;
 import java.util.HashMap;
@@ -26,5 +27,9 @@ public class MyTest {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+    @Test
+    public void VerificationCodeTest(){
+        System.out.println(VerificationCodeUtil.generateVerificationCode());
     }
 }
