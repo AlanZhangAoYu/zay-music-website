@@ -3,10 +3,10 @@ package service;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import util.GlobalConstant;
-import javax.annotation.Resource;
 
 /**
  * @author ZAY
@@ -14,7 +14,7 @@ import javax.annotation.Resource;
  */
 @Service
 public class RedisService {
-    @Resource
+    @Autowired
     private StringRedisTemplate redisTemplate;
     // Key（键），简单的key-value操作
     /**
@@ -75,8 +75,7 @@ public class RedisService {
      * 实现命令：SET key value EX seconds，设置key-value和超时时间（秒）
      * @param key
      * @param value
-     * @param timeout
-     *            （以秒为单位）
+     * @param timeout（以秒为单位）
      */
     public void set(String key, String value, long timeout) {
         redisTemplate.opsForValue().set(key, value, timeout, TimeUnit.SECONDS);

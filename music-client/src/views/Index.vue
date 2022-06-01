@@ -140,7 +140,7 @@
     <audio id="MyAudio_1" ref="myAudio" :src="playUrl" preload="auto" @ended="songEnded(curSongIndex)" @timeupdate="changeSongTime"></audio>
   </div>
 
-  <el-dialog v-model="userLoginVisible" title="用户登录" width="30%" @opened="drawPic('12x5')">
+  <el-dialog v-model="userLoginVisible" title="用户登录" width="30%">
     <el-form v-model="userLoginList">
       <el-form-item label="账号">
         <el-input v-model="userLoginList.userName" placeholder="请输入账号"/>
@@ -152,6 +152,7 @@
         <el-input v-model="userLoginList.verification" placeholder="请输入验证码"/>
         <div>
           <canvas ref="code_picture" width="117" height="32"></canvas>
+          <el-button type="text" :disabled="verification_code_button" @click="getVerificationCode">点我查看验证码</el-button>
         </div>
       </el-form-item>
     </el-form>
@@ -159,7 +160,7 @@
     <template #footer>
       <span class="dialog-footer">
         <el-button @click="userLoginVisible = false">取消</el-button>
-        <el-button type="primary" @click="userLogin">登录</el-button>
+        <el-button type="primary" @click="">登录</el-button>
       </span>
     </template>
   </el-dialog>
@@ -180,6 +181,7 @@
   import { Delete } from '@element-plus/icons-vue';
   import { Download } from '@element-plus/icons-vue';
   import { inject } from 'vue';
+  import api from "@/router";
   export default {
     setup(){
       const activeIndex = ref('1');
@@ -192,6 +194,7 @@
       const direction = ref('rtl');
       const playListVisible = ref(false);
       const userLoginVisible = ref(false);
+      let verification_code_button = ref(true);
       let userLoginList=reactive({
         userName: '',
         password: '',
@@ -223,9 +226,6 @@
       let curSongIndex = ref(0);
       let albumImgUrl = ref('');
       let itemKey = ref(Math.random());
-      const imgForm = reactive({
-        fileList: []
-      });
       const handleSelect = (key, keyPath) => {
         //console.log(key, keyPath);
       }
@@ -287,6 +287,10 @@
       //监听函数，监听音量滑动条的改变来动态设置音量大小
       watch(volume,()=>{
         myAudio.value.volume = volume.value/100;
+      });
+      //监听只有用户输入账号时才解锁生成验证码
+      watch(userLoginList,()=>{
+        verification_code_button.value = userLoginList.userName === '';
       });
       //从播放列表中删除项目
       const deleteSongFromPlayList=(index)=>{
@@ -419,7 +423,8 @@
         Play,Suspend,deleteSongFromPlayList,lastMusic,nextMusic,clickSlider,volumeAppear,playbackModePanelAppear,
         selectPlayMode0,selectPlayMode1,selectPlayMode2,volumeDisappear,songEnded,changeSongTime,util,
         Download,Delete,Headset,Fold,ArrowDownBold,ArrowUpBold,Avatar,IconPicture,curSongIndex,userLoginVisible,
-        userLoginList,gotoUserRegister,randomNum,randomColor,drawPic,drawText,drawLine,drawDot,code_picture
+        userLoginList,gotoUserRegister,randomNum,randomColor,drawPic,drawText,drawLine,drawDot,code_picture,
+        verification_code_button
       }
     },
     methods:{
@@ -437,6 +442,12 @@
           this.drawLine(ctx);
           this.drawDot(ctx);
         });
+      },
+      getVerificationCode(){
+        axios.get(api.baseUrl.baseUrl+'/getVerificationCode',{params:{userName: this.userLoginList.userName}})
+            .then((response)=>{
+              this.drawPic(response.data.code);
+            });
       }
     }
   }
