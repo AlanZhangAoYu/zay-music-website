@@ -185,6 +185,9 @@
       path: '/SingerView'
     });
   }
+  function downloadSong(){
+
+  }
 </script>
 
 <style scoped>

@@ -119,7 +119,6 @@ public class MongoDbFileService {
         Field field = query.fields();
         field.exclude("content");
         return mongoTemplate.find(query , MongoDbFile.class );
-
     }
     public String uploadFile(MultipartFile file){
         try{

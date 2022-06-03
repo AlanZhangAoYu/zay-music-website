@@ -16,6 +16,7 @@ import util.Mp3Util;
 import util.MultipartFileToFileUtil;
 import javax.annotation.Resource;
 import java.io.File;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -95,8 +96,21 @@ public class SongController {
         return file.<ResponseEntity<Object>>map(mongoDbFile -> ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "fileName=" + mongoDbFile.getName())
                 .header(HttpHeaders.CONTENT_TYPE, mongoDbFile.getContentType())
-                .header(HttpHeaders.CONTENT_LENGTH, mongoDbFile.getSize() + "").header("Connection", "close")
                 .header(HttpHeaders.CONTENT_LENGTH, mongoDbFile.getSize() + "")
-                .body(mongoDbFile.getContent())).orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body("File was not found"));
+                .header("Connection", "close")
+                .header(HttpHeaders.CONTENT_LENGTH, mongoDbFile.getSize() + "")
+                .body(mongoDbFile.getContent()))
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body("File was not found"));
+    }
+    @GetMapping(value = "/downloadFile/{id}")
+    public ResponseEntity<Object> downloadFile(@PathVariable("id") String id) {
+        Optional<MongoDbFile> file = mongoDbFileService.getFileById(id);
+        return file.<ResponseEntity<Object>>map(mongoDbFile -> ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment;fileName=" + new String(mongoDbFile.getName().getBytes(StandardCharsets.UTF_8), StandardCharsets.ISO_8859_1))
+                .header(HttpHeaders.CONTENT_TYPE, "application/octet-stream")
+                .header(HttpHeaders.CONTENT_LENGTH, mongoDbFile.getSize() + "")
+                .header("Connection", "close")
+                .body(mongoDbFile.getContent()))
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body("File was not fount"));
     }
 }

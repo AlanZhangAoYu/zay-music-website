@@ -36,7 +36,7 @@ public class WebInterceptorConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry){
         List<String> excludePath = new ArrayList<>();
-        //排除拦截，除了注册登录(此时还没token)以及所有查询，其他任何更改数据库的数据的请求都拦截
+        //排除拦截，除了注册登录(此时还没token)以及所有查询,下载音乐文件，其他任何更改数据库的数据的请求都拦截
         excludePath.add("/adminLogin");
         excludePath.add("/userRegister");
         excludePath.add("/userLogin");
@@ -44,6 +44,7 @@ public class WebInterceptorConfig implements WebMvcConfigurer {
         excludePath.add("/select*");
         excludePath.add("/error");
         excludePath.add("/getVerificationCode");
+        excludePath.add("/downloadFile/*");
         registry.addInterceptor(tokenInterceptor)
                 .addPathPatterns("/**")
                 .excludePathPatterns(excludePath);

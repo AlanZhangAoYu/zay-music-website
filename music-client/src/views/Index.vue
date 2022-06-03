@@ -108,7 +108,8 @@
           </div>
           <div style="position: relative;top: 0;left: 100px;">
             <!--歌曲下载按钮-->
-            <a class="play_bar_icon" style="width: 16px;height: 16px;background-position: -240px -32px;" href="javascript:void(0);"></a>
+            <a class="play_bar_icon" style="width: 16px;height: 16px;background-position: -240px -32px;" href="javascript:void(0);"
+               @click="downloadSong(curSongIndex)"></a>
           </div>
           <div style="position: relative;top: -23px;left: 150px;">
             <!--播放列表按钮-->
@@ -448,6 +449,15 @@
             .then((response)=>{
               this.drawPic(response.data.code);
             });
+      },
+      downloadSong(curSongIndex){
+        const playUrl = this.playList[curSongIndex].songPlayUrl;
+        console.log('downloadUrl:'+playUrl);
+        const fileId=playUrl.substring((api.baseUrl.baseUrl+'/previewFile/').length);
+        console.log('downloadFileId:'+fileId);
+        axios.get(api.baseUrl.baseUrl+'/downloadFile/'+fileId).then((response)=>{
+
+        });
       }
     }
   }
