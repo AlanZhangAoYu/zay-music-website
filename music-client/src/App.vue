@@ -44,4 +44,16 @@ body::-webkit-scrollbar-track {
   background: #ededed;
   border-radius: 10px;
 }
+@font-face {
+  font-family: MiSans-Light;
+  src: url('./assets/fonts/MiSans-Light.ttf');
+}
+@font-face {
+  font-family: MiSans-Normal;
+  src: url('./assets/fonts/MiSans-Normal.ttf');
+}
+@font-face {
+  font-family: MiSans-Regular;
+  src: url('./assets/fonts/MiSans-Regular.ttf');
+}
 </style>
