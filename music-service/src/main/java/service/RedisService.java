@@ -86,7 +86,7 @@ public class RedisService {
      * @return value
      */
     public String get(String key) {
-        return (String)redisTemplate.opsForValue().get(key);
+        return redisTemplate.opsForValue().get(key);
     }
     // Hash（哈希表）
     /**
