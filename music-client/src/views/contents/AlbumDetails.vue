@@ -48,7 +48,7 @@
         <el-col :span="2"><div>时长</div></el-col>
         <el-col :span="2"><div>操作</div></el-col>
       </el-row>
-      <el-scrollbar max-height="340px" class="scrollbar">
+      <el-scrollbar max-height="480px" class="scrollbar">
         <div v-for="song in songList.songList" :key="song" class="row">
           <el-row>
             <el-col :span="8"><div>{{ song.songName }}</div></el-col>
