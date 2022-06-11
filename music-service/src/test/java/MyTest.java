@@ -1,12 +1,10 @@
 import org.junit.Test;
-import util.Md5Util;
-import util.Mp3Util;
-import util.RandomSaltUtil;
-import util.VerificationCodeUtil;
+import util.*;
 
 import java.io.File;
 import java.util.HashMap;
 import java.util.Scanner;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class MyTest {
     Scanner scanner= new Scanner(System.in);
@@ -31,5 +29,24 @@ public class MyTest {
     @Test
     public void VerificationCodeTest(){
         System.out.println(VerificationCodeUtil.generateVerificationCode());
+    }
+    @Test
+    public void SnowflakeIdTest(){
+        SnowflakeIdUtil idWorker = new SnowflakeIdUtil(0, 0);
+        Runnable runnable= () -> {
+            while (true){
+                long nextId =idWorker.nextId();
+                //注!!! 这句输出严重影响性能,在以后的开发中尽量少用
+                //System.out.println(nextId);
+            }
+        };
+        Thread thread=new Thread(runnable);
+        thread.start();
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        thread.stop();
     }
 }
