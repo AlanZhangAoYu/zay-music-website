@@ -11,7 +11,7 @@
             active-text-color="#ffd04b"
             @select="handleSelect">
           <img src="../assets/image/logo.png" width="30" height="30" style="margin-top: 10px;margin-left: 10px;"/>
-          <span style="margin: 10px; color: azure; font-size: 30px;font-family: serif; font-style: oblique;">Zay-music</span>
+          <span style="margin: 10px; color: azure; font-size: 30px;">ZAY-Music</span>
           <el-menu-item index="1"><router-link to="/MainView" class="a">首页</router-link></el-menu-item>
           <el-menu-item index="2"><router-link to="/ListView" class="a">榜单</router-link></el-menu-item>
           <el-menu-item index="3"><router-link to="/SingerView" class="a">歌手</router-link></el-menu-item>
@@ -445,7 +445,7 @@
         });
       },
       getVerificationCode(){
-        axios.get(api.baseUrl.baseUrl+'/getVerificationCode',{params:{userName: this.userLoginList.userName}})
+        axios.get(api.baseUrl.baseUrl+'/getVerificationCode',{params:{userKey: this.userLoginList.userName}})
             .then((response)=>{
               this.drawPic(response.data.code);
             });
